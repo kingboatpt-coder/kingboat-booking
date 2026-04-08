@@ -191,6 +191,9 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
     <button class="btn-submit" id="btn-submit" onclick="submitForm()">送出申請表單</button>
   </div>
 
+</div><!-- end form-area -->
+
+<div class="main">
   <div id="success-screen">
     <div class="success-icon">✅</div>
     <div class="success-title">申請表單已成功送出</div>
@@ -354,11 +357,4 @@ async function submitForm(){
   }catch(e){
     document.getElementById('loading').classList.remove('show');
     document.getElementById('btn-submit').disabled=false;
-    alert('送出失敗，請檢查網路連線或聯絡館方。錯誤：'+e.message);
-  }
-}
-
-fetchAll();
-</script>
-</body>
-</html>
+    alert('送出失敗，請檢查網路連線或聯絡館方。錯誤：'+e.messag
