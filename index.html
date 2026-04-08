@@ -81,6 +81,40 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto .8rem}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:560px){.field-grid{grid-template-columns:1fr}.field-full{grid-column:1}.products-grid{grid-template-columns:1fr 1fr}.banner-title{font-size:1.5rem}}
+.query-toggle{text-align:center;margin-bottom:1.4rem}
+.query-toggle a{color:var(--red);font-size:.9rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;letter-spacing:.03em}
+.query-panel{display:none;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:1.4rem;margin-bottom:1.8rem}
+.query-panel.open{display:block}
+.query-panel h3{font-family:'Noto Serif TC',serif;font-size:1rem;color:var(--red);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.query-input-row{display:flex;gap:.8rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:1rem}
+.query-input-row .field{flex:1;min-width:180px}
+.query-input-row .btn-query{height:38px;padding:0 1.4rem;background:var(--red);color:var(--gold-lt);border:none;border-radius:5px;font-family:'Noto Sans TC',sans-serif;font-size:.88rem;cursor:pointer;white-space:nowrap}
+.query-input-row .btn-query:hover{background:var(--red-lt)}
+.query-input-row .btn-query:disabled{background:var(--ink-3);cursor:not-allowed}
+.query-result{margin-top:.5rem}
+.query-empty{color:var(--ink-3);font-size:.88rem;padding:.5rem 0}
+.booking-card{border:1px solid var(--border);border-radius:6px;padding:1rem;margin-bottom:.8rem;background:var(--cream)}
+.booking-card.cancelled{opacity:.5;text-decoration:line-through}
+.booking-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;flex-wrap:wrap;gap:.4rem}
+.booking-ref{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--red);font-size:.92rem}
+.booking-date{font-size:.85rem;color:var(--ink-2)}
+.booking-detail{font-size:.83rem;color:var(--ink-2);line-height:1.7}
+.booking-actions{margin-top:.8rem}
+.btn-cancel-booking{background:transparent;border:1px solid #dc3545;color:#dc3545;padding:.3rem .9rem;border-radius:4px;font-size:.82rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif}
+.btn-cancel-booking:hover{background:#dc3545;color:#fff}
+.btn-cancel{background:transparent;border:1px solid #dc3545;color:#dc3545;padding:.3rem .9rem;border-radius:4px;font-size:.82rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif}
+.btn-cancel:hover{background:#dc3545;color:#fff}
+.cancel-form{margin-top:.6rem;padding:.8rem;background:#FEF9EE;border:1px solid var(--gold);border-radius:5px;display:none}
+.cancel-form.open{display:block}
+.cancel-verify{margin-top:.6rem;padding:.8rem;background:#FEF9EE;border:1px solid var(--gold);border-radius:5px;display:none}
+.cancel-verify.open{display:block}
+.cancel-verify .field{margin-bottom:.5rem}
+.cancel-verify .field input{width:100%;border:1px solid var(--border);border-radius:4px;padding:.4rem .6rem;font-size:.85rem;font-family:'Noto Sans TC',sans-serif}
+.cancel-verify .field input:focus{outline:none;border-color:var(--red)}
+.cancel-btns{display:flex;gap:.5rem;margin-top:.6rem}
+.booking-status{font-size:.78rem;padding:2px 8px;border-radius:20px;display:inline-block}
+.status-active{background:var(--ok-lt);color:var(--ok)}
+.status-cancelled{background:#F8D7DA;color:#721C24}
 </style>
 </head>
 <body>
@@ -95,6 +129,21 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
 </div>
 
 <div class="main" id="form-area" style="opacity:0;transition:opacity .4s">
+
+  <!-- 查詢預約紀錄 -->
+  <div class="query-toggle"><a onclick="toggleQuery()">🔍 查詢／取消預約紀錄</a></div>
+  <div class="query-panel" id="query-panel">
+    <h3>📋 查詢預約紀錄</h3>
+    <div class="query-input-row">
+      <div class="field">
+        <label>申請單位</label>
+        <input type="text" id="query-org" placeholder="請輸入您填表時的申請單位名稱">
+      </div>
+      <button class="btn-query" id="btn-query" onclick="doQuery()">查詢</button>
+    </div>
+    <div class="query-result" id="query-result"></div>
+  </div>
+
   <div class="notice" id="s-notice">
     <div style="text-align:center;color:var(--ink-3);padding:.5rem 0">載入中…</div>
   </div>
@@ -347,14 +396,13 @@ async function submitForm(){
     const postBody = JSON.stringify({ action: 'submit', ...payload });
     let result;
     try {
-      const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: postBody });
-      const text = await res.text();
+      const r = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: postBody });
+      const text = await r.text();
       try { result = JSON.parse(text); } catch(x) { result = { success: true }; }
-    } catch(e) {
-      // POST 失敗時 fallback 用 GET
+    } catch(e1) {
       const url = APPS_SCRIPT_URL + '?action=submit&data=' + encodeURIComponent(JSON.stringify(payload));
-      const res2 = await fetch(url);
-      try { result = await res2.json(); } catch(x) { result = { success: true }; }
+      const r2 = await fetch(url);
+      try { result = await r2.json(); } catch(x) { result = { success: true }; }
     }
     document.getElementById('loading').classList.remove('show');
     document.getElementById('form-area').style.display='none';
@@ -365,6 +413,121 @@ async function submitForm(){
     document.getElementById('loading').classList.remove('show');
     document.getElementById('btn-submit').disabled=false;
     alert('送出失敗，請檢查網路連線或聯絡館方。錯誤：'+e.message);
+  }
+}
+
+// ── 查詢 / 取消預約 ──
+function toggleQuery(){
+  document.getElementById('query-panel').classList.toggle('open');
+}
+
+async function doQuery(){
+  const org = document.getElementById('query-org').value.trim();
+  if(!org){alert('請輸入申請單位名稱');return;}
+  const btn = document.getElementById('btn-query');
+  const box = document.getElementById('query-result');
+  btn.disabled=true; btn.textContent='查詢中…';
+  box.innerHTML='';
+  try{
+    const url = APPS_SCRIPT_URL+'?action=queryBookings&data='+encodeURIComponent(JSON.stringify({org}));
+    const r = await fetch(url);
+    const data = await r.json();
+    btn.disabled=false; btn.textContent='查詢';
+    if(!data.success){box.innerHTML=`<p class="query-empty">${data.error||'查詢失敗'}</p>`;return;}
+    const list = data.bookings||[];
+    if(!list.length){box.innerHTML='<p class="query-empty">查無未來的預約紀錄。</p>';return;}
+    box.innerHTML = list.map(b=>{
+      const dateStr = formatDate(b.tourDate);
+      const timeStr = b.tourStart + (b.tourEnd ? ' ～ '+b.tourEnd : '');
+      const itemsHtml = b.items && b.items!=='（無）' ? `<br>伴手禮：${b.items}<br>預訂金額：NT$ ${Number(b.total).toLocaleString()}` : '';
+      return `<div class="booking-card" id="bk-${b.ref}">
+        <div class="booking-card-header">
+          <span class="booking-ref">${b.ref}</span>
+          <span class="booking-date">${dateStr} ${timeStr}</span>
+        </div>
+        <div class="booking-detail">
+          人數：${b.pax} 人 ｜ 單位：${b.org}<br>
+          聯絡人：${maskName(b.contactName)} / ${maskPhone(b.contactPhone)}${itemsHtml}
+        </div>
+        <div class="booking-actions">
+          <button class="btn-cancel" onclick="showCancelForm('${b.ref}')">取消此預約</button>
+        </div>
+        <div class="cancel-verify" id="cv-${b.ref}">
+          <div style="font-size:.82rem;color:var(--ink-2);margin-bottom:.5rem">請輸入預約時填寫的聯絡人資料以驗證身分：</div>
+          <div class="field">
+            <label style="font-size:.78rem;color:var(--ink-2)">聯絡人姓名</label>
+            <input type="text" id="cn-${b.ref}" placeholder="請輸入完整姓名">
+          </div>
+          <div class="field">
+            <label style="font-size:.78rem;color:var(--ink-2)">聯絡人電話</label>
+            <input type="tel" id="cp-${b.ref}" placeholder="請輸入電話號碼">
+          </div>
+          <div class="cancel-btns">
+            <button class="btn-cancel" onclick="doCancel('${b.ref}')" id="cb-${b.ref}">確認取消</button>
+            <button style="background:transparent;border:1px solid var(--border);padding:.3rem .9rem;border-radius:4px;font-size:.82rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif" onclick="hideCancelForm('${b.ref}')">返回</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){
+    btn.disabled=false; btn.textContent='查詢';
+    box.innerHTML='<p class="query-empty">查詢失敗，請稍後再試。</p>';
+  }
+}
+
+function formatDate(d){
+  if(!d) return '—';
+  // handle Date object string or yyyy-mm-dd
+  const dt = new Date(d);
+  if(isNaN(dt.getTime())) return d;
+  return `${dt.getFullYear()}/${String(dt.getMonth()+1).padStart(2,'0')}/${String(dt.getDate()).padStart(2,'0')}`;
+}
+function maskName(n){
+  if(!n||n.length<=1) return n||'';
+  return n[0]+'○'.repeat(n.length-1);
+}
+function maskPhone(p){
+  if(!p||p.length<=4) return p||'';
+  return p.slice(0,3)+'****'+p.slice(-2);
+}
+
+function showCancelForm(ref){
+  document.getElementById('cv-'+ref).classList.add('open');
+}
+function hideCancelForm(ref){
+  document.getElementById('cv-'+ref).classList.remove('open');
+}
+
+async function doCancel(ref){
+  const name = document.getElementById('cn-'+ref).value.trim();
+  const phone = document.getElementById('cp-'+ref).value.trim();
+  if(!name||!phone){alert('請輸入聯絡人姓名和電話');return;}
+  if(!confirm('確定要取消此預約（'+ref+'）嗎？取消後無法復原。'))return;
+  const btn = document.getElementById('cb-'+ref);
+  btn.disabled=true; btn.textContent='處理中…';
+  try{
+    const body = JSON.stringify({action:'cancelBooking',ref,contactName:name,contactPhone:phone});
+    let result;
+    try{
+      const r = await fetch(APPS_SCRIPT_URL,{method:'POST',body});
+      const text = await r.text();
+      try{result=JSON.parse(text);}catch(x){result={success:false,error:'回應格式錯誤'};}
+    }catch(e1){
+      const url = APPS_SCRIPT_URL+'?action=cancelBooking&data='+encodeURIComponent(JSON.stringify({ref,contactName:name,contactPhone:phone}));
+      const r2 = await fetch(url);
+      result = await r2.json();
+    }
+    btn.disabled=false; btn.textContent='確認取消';
+    if(result.success){
+      const card = document.getElementById('bk-'+ref);
+      card.style.opacity='.4';
+      card.innerHTML='<div style="text-align:center;padding:1rem;color:var(--ok);font-weight:500">✅ 此預約已成功取消</div>';
+    } else {
+      alert(result.error||'取消失敗，請確認資料是否正確');
+    }
+  }catch(e){
+    btn.disabled=false; btn.textContent='確認取消';
+    alert('取消失敗，請稍後再試。');
   }
 }
 
