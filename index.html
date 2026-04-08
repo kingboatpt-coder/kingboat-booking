@@ -89,18 +89,14 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
 </script>
 
 <div class="banner">
-  <div class="banner-subtitle" id="s-banner_subtitle">財團法人屏東縣文化基金會</div>
-  <div class="banner-title" id="s-banner_title">王船文化館</div>
-  <div class="banner-desc" id="s-banner_desc">團體導覽預約申請 ／ 伴手禮預訂</div>
+  <div class="banner-subtitle" id="s-banner_subtitle">&nbsp;</div>
+  <div class="banner-title" id="s-banner_title">&nbsp;</div>
+  <div class="banner-desc" id="s-banner_desc">&nbsp;</div>
 </div>
 
-<div class="main" id="form-area">
+<div class="main" id="form-area" style="opacity:0;transition:opacity .4s">
   <div class="notice" id="s-notice">
-    一、本服務供學校、機關、企業、社區等團體事先預約導覽及選購伴手禮／餐食。<br>
-    二、請於預定導覽日<strong>至少7個工作日前</strong>送出本申請表，預約成功將由專人電話通知。<br>
-    三、導覽時間每場60分鐘，每團限20–40人；超過40人須配合拆團分批。<br>
-    四、伴手禮及餐食須於<strong>送出申請時一併預訂</strong>，金額將於現場導覽報到時繳付。<br>
-    五、洽詢電話：(08) 833-1680 #413（週一至週五 09:00–17:00）
+    <div style="text-align:center;color:var(--ink-3);padding:.5rem 0">載入中…</div>
   </div>
 
   <div class="section-card">
@@ -124,7 +120,7 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
         <div class="field">
           <label>預計人數 <span class="req">*</span></label>
           <input type="number" id="pax" min="1" placeholder="請輸入人數">
-          <div class="field-hint" id="s-pax_hint">本館預約導覽最低收取 20人 × NT$30 費用，不滿20人仍以20人計費（NT$600）。</div>
+          <div class="field-hint" id="s-pax_hint">&nbsp;</div>
           <span class="error-msg">請填寫人數</span>
         </div>
         <div class="field field-full">
@@ -178,10 +174,10 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
     <div class="section-header"><div class="section-num">三</div><div class="section-title">重要須知確認 <span style="font-size:.8rem;color:var(--ink-3);">（請逐項閱讀並勾選）</span></div></div>
     <div class="section-body">
       <div class="checklist">
-        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check1">我已了解，團體預約導覽須於活動日前7個工作日送出申請表單。</span></label>
-        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check2">我已了解，導覽時須使用導覽子母機（視情況使用MIPRO隨身麥克風），每人酌收設備使用費新臺幣30元；不足20人仍以20人計費（NT$600）。</span></label>
-        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check3">我已了解，當日若無故遲到30分鐘，場館有權取消本次導覽預約。</span></label>
-        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check4">我已了解，預訂之伴手禮及餐食金額將於報到時一併現場繳付，恕不接受臨時取消。</span></label>
+        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check1"></span></label>
+        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check2"></span></label>
+        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check3"></span></label>
+        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check4"></span></label>
       </div>
       <div id="check-error" style="display:none;color:var(--red);font-size:.82rem;margin-top:.6rem;">請勾選所有重要須知後才能送出</div>
     </div>
@@ -197,7 +193,7 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
   <div id="success-screen">
     <div class="success-icon">✅</div>
     <div class="success-title">申請表單已成功送出</div>
-    <div class="success-desc" id="s-success_desc">請靜待服務人員聯繫確認細節，或者可主動來電確認：08-8331680</div>
+    <div class="success-desc" id="s-success_desc"></div>
     <div class="success-ref" id="success-ref"></div>
   </div>
 </div>
@@ -249,6 +245,7 @@ async function fetchAll(){
       fetch(APPS_SCRIPT_URL+'?action=settings').then(r=>r.json()),
     ]);
     if(sr.settings) applySettings(sr.settings);
+    document.getElementById('form-area').style.opacity='1';
     if(pr.products&&pr.products.length){
       PRODUCTS=pr.products;
       PRODUCTS.forEach(p=>{inventory[p.id]=p.stock;quantities[p.id]=0;});
@@ -257,6 +254,7 @@ async function fetchAll(){
       document.getElementById('products-grid').innerHTML='<p style="color:var(--ink-3);font-size:.85rem;">目前無商品資料。</p>';
     }
   }catch(e){
+    document.getElementById('form-area').style.opacity='1';
     document.getElementById('products-grid').innerHTML='<p style="color:var(--ink-3);font-size:.85rem;">商品資料載入失敗，請重新整理頁面。</p>';
   }
 }
