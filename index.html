@@ -346,13 +346,18 @@ async function submitForm(){
     items:PRODUCTS.filter(p=>quantities[p.id]>0).map(p=>({id:p.id,name:p.name,qty:quantities[p.id],price:p.price})),
   };
   try{
-    const url = APPS_SCRIPT_URL;
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'submit', ...payload }),
-    });
-    const result = await res.json().catch(()=>({success:true}));
+    const postBody = JSON.stringify({ action: 'submit', ...payload });
+    let result;
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: postBody });
+      const text = await res.text();
+      try { result = JSON.parse(text); } catch(x) { result = { success: true }; }
+    } catch(e) {
+      // POST 失敗時 fallback 用 GET
+      const url = APPS_SCRIPT_URL + '?action=submit&data=' + encodeURIComponent(JSON.stringify(payload));
+      const res2 = await fetch(url);
+      try { result = await res2.json(); } catch(x) { result = { success: true }; }
+    }
     document.getElementById('loading').classList.remove('show');
     document.getElementById('form-area').style.display='none';
     document.getElementById('success-screen').style.display='block';
