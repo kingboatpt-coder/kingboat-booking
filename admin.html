@@ -329,8 +329,11 @@ async function saveSettings(){
 // ── API POST（使用 text/plain 繞過 CORS preflight）──
 async function apiPost(body){
   try{
-    const url = API + '?action=' + body.action + '&data=' + encodeURIComponent(JSON.stringify(body));
-    const res = await fetch(url);
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body),
+    });
     return res.json();
   }catch(e){console.error(e);return null;}
 }
