@@ -218,7 +218,7 @@ let PRODUCTS=[],inventory={},quantities={};
 
 // 套用後台設定到頁面
 function applySettings(s){
-  const set=(id,val)=>{const el=document.getElementById('s-'+id);if(el&&val)el.textContent=val;};
+  const set=(id,val)=>{const el=document.getElementById('s-'+id);if(el&&val!==undefined&&val!==null)el.textContent=val;};
   set('banner_subtitle',s.banner_subtitle);
   set('banner_title',   s.banner_title);
   set('banner_desc',    s.banner_desc);
