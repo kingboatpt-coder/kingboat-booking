@@ -346,8 +346,12 @@ async function submitForm(){
     items:PRODUCTS.filter(p=>quantities[p.id]>0).map(p=>({id:p.id,name:p.name,qty:quantities[p.id],price:p.price})),
   };
   try{
-    const url = APPS_SCRIPT_URL + '?action=submit&data=' + encodeURIComponent(JSON.stringify(payload));
-    const res = await fetch(url);
+    const url = APPS_SCRIPT_URL;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'submit', ...payload }),
+    });
     const result = await res.json().catch(()=>({success:true}));
     document.getElementById('loading').classList.remove('show');
     document.getElementById('form-area').style.display='none';
@@ -357,4 +361,11 @@ async function submitForm(){
   }catch(e){
     document.getElementById('loading').classList.remove('show');
     document.getElementById('btn-submit').disabled=false;
-    alert('送出失敗，請檢查網路連線或聯絡館方。錯誤：'+e.messag
+    alert('送出失敗，請檢查網路連線或聯絡館方。錯誤：'+e.message);
+  }
+}
+
+fetchAll();
+</script>
+</body>
+</html>
