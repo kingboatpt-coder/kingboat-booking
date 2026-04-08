@@ -102,14 +102,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWL
 </div>
 
 <div class="main" id="form-area">
-  <div class="notice">
-    <strong>申請須知</strong><br>
-    一、本服務供學校、機關、企業、社區等團體事先預約導覽及選購伴手禮／餐食。<br>
-    二、請於預定導覽日<strong>至少7個工作日前</strong>送出本申請表，預約成功將由專人電話通知。<br>
-    三、導覽時間每場60分鐘，每團限20–40人；超過40人須配合拆團分批。<br>
-    四、伴手禮及餐食須於<strong>送出申請時一併預訂</strong>，金額將於現場導覽報到時繳付。<br>
-    五、洽詢電話：(08) 833-1680 #413（週一至週五 09:00–17:00）
-  </div>
+  <div class="notice"><strong>申請須知</strong><br><span id="notice-body">一、本服務供學校、機關、企業、社區等團體事先預約導覽及選購伴手禮／餐食。<br>二、請於預定導覽日至少7個工作日前送出本申請表，預約成功將由專人電話通知。<br>三、導覽時間每場60分鐘，每團限20–40人；超過40人須配合拆團分批。<br>四、伴手禮及餐食須於送出申請時一併預訂，金額將於現場導覽報到時繳付。<br>五、洽詢電話：(08) 833-1680 #413（週一至週五 09:00–17:00）</span></div>
 
   <div class="section-card">
     <div class="section-header"><div class="section-num">一</div><div class="section-title">導覽預約資料</div></div>
@@ -136,7 +129,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWL
         <div class="field">
           <label>預計人數 <span class="req">*</span></label>
           <input type="number" id="pax" min="1" placeholder="請輸入人數">
-          <div class="field-hint">本館預約導覽最低收取 20人 × NT$30 費用，不滿20人仍以20人計費（NT$600）。</div>
+          <div class="field-hint" id="pax-hint">本館預約導覽最低收取 20人 × NT$30 費用，不滿20人仍以20人計費（NT$600）。</div>
           <span class="error-msg">請填寫人數</span>
         </div>
 
@@ -197,10 +190,10 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWL
     <div class="section-header"><div class="section-num">三</div><div class="section-title">重要須知確認 <span style="font-size:.8rem;color:var(--ink-3);">（請逐項閱讀並勾選）</span></div></div>
     <div class="section-body">
       <div class="checklist">
-        <label class="check-item"><input type="checkbox" class="must-check"> 我已了解，團體預約導覽須於活動日前7個工作日送出申請表單。</label>
-        <label class="check-item"><input type="checkbox" class="must-check"> 我已了解，導覽時須使用導覽子母機（視情況使用MIPRO隨身麥克風），每人酌收設備使用費新臺幣30元；不足20人仍以20人計費（NT$600）。</label>
-        <label class="check-item"><input type="checkbox" class="must-check"> 我已了解，當日若無故遲到30分鐘，場館有權取消本次導覽預約。</label>
-        <label class="check-item"><input type="checkbox" class="must-check"> 我已了解，預訂之伴手禮及餐食金額將於報到時一併現場繳付，恕不接受臨時取消。</label>
+        <label class="check-item"><input type="checkbox" class="must-check"> <span id="chk1">我已了解，團體預約導覽須於活動日前7個工作日送出申請表單。</span></label>
+        <label class="check-item"><input type="checkbox" class="must-check"> <span id="chk2">我已了解，導覽時須使用導覽子母機</span>（視情況使用MIPRO隨身麥克風），每人酌收設備使用費新臺幣30元；不足20人仍以20人計費（NT$600）。</label>
+        <label class="check-item"><input type="checkbox" class="must-check"> <span id="chk3">我已了解，當日若無故遲到30分鐘</span>，場館有權取消本次導覽預約。</label>
+        <label class="check-item"><input type="checkbox" class="must-check"> <span id="chk4">我已了解，預訂之伴手禮及餐食金額</span>將於報到時一併現場繳付，恕不接受臨時取消。</label>
       </div>
       <div id="check-error" style="display:none;color:var(--red);font-size:.82rem;margin-top:.6rem;">請勾選所有重要須知後才能送出</div>
     </div>
@@ -240,6 +233,44 @@ buildTime('tour-end',   9, 0, 18,  0);
 
 // 商品
 let PRODUCTS = [], inventory = {}, quantities = {};
+
+async function fetchAll() {
+  // 同時載入商品和頁面設定
+  try {
+    const [prodRes, settRes] = await Promise.all([
+      fetch(APPS_SCRIPT_URL + '?action=products').then(r=>r.json()),
+      fetch(APPS_SCRIPT_URL + '?action=settings').then(r=>r.json()),
+    ]);
+    // 套用設定
+    if (settRes.settings) applySettings(settRes.settings);
+    // 套用商品
+    if (prodRes.products && prodRes.products.length) {
+      PRODUCTS = prodRes.products;
+      PRODUCTS.forEach(p => { inventory[p.id] = p.stock; quantities[p.id] = 0; });
+      renderProducts();
+    } else {
+      document.getElementById('products-grid').innerHTML = '<p style="color:var(--ink-3);font-size:.85rem;">目前無商品資料。</p>';
+    }
+  } catch(e) {
+    document.getElementById('products-grid').innerHTML = '<p style="color:var(--ink-3);font-size:.85rem;">商品資料載入失敗，請重新整理頁面。</p>';
+  }
+}
+
+function applySettings(s) {
+  if (s.banner_subtitle) document.querySelector('.banner-subtitle').textContent = s.banner_subtitle;
+  if (s.banner_title)    document.querySelector('.banner-title').textContent    = s.banner_title;
+  if (s.banner_desc)     document.querySelector('.banner-desc').textContent     = s.banner_desc;
+  if (s.notice) {
+    const lines = s.notice.split('\n').filter(l=>l.trim());
+    document.getElementById('notice-body').innerHTML = lines.map(l=>`<span>${l}</span>`).join('<br>');
+  }
+  if (s.pax_hint)     document.getElementById('pax-hint').textContent     = s.pax_hint;
+  if (s.check1)       document.getElementById('chk1').textContent          = s.check1;
+  if (s.check2)       document.getElementById('chk2').textContent          = s.check2;
+  if (s.check3)       document.getElementById('chk3').textContent          = s.check3;
+  if (s.check4)       document.getElementById('chk4').textContent          = s.check4;
+  if (s.success_desc) document.querySelector('.success-desc').innerHTML    = s.success_desc.replace(/\n/g,'<br>');
+}
 
 async function fetchProducts() {
   try {
@@ -357,7 +388,7 @@ async function submitForm() {
   }
 }
 
-fetchProducts();
+fetchAll();
 </script>
 </body>
 </html>
