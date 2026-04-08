@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>王船文化館｜團體導覽預約申請</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── 全域設定 ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  :root {
+    --red:    #8B1A1A;
+    --red-lt: #C0392B;
+    --gold:   #C9A84C;
+    --gold-lt:#F0D080;
+    --cream:  #FAF6EF;
+    --paper:  #F3ECD8;
+    --ink:    #2C1810;
+    --ink-2:  #5C3D2E;
+    --ink-3:  #8B6954;
+    --border: #D4B896;
+    --white:  #FFFFFF;
+    --ok:     #2D6A4F;
+    --ok-lt:  #D8F3DC;
+  }
+ 
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+ 
+  /* ── 頂部橫幅 ── */
+  .banner {
+    background: var(--red);
+    color: var(--gold-lt);
+    text-align: center;
+    padding: 2.5rem 1rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .banner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(
+      90deg, transparent 0px, transparent 28px,
+      rgba(201,168,76,0.12) 28px, rgba(201,168,76,0.12) 29px
+    ), repeating-linear-gradient(
+      0deg, transparent 0px, transparent 28px,
+      rgba(201,168,76,0.12) 28px, rgba(201,168,76,0.12) 29px
+    );
+    pointer-events: none;
+  }
+  .banner-subtitle { font-size: 0.85rem; letter-spacing: 0.3em; color: var(--gold); margin-bottom: 0.4rem; }
+  .banner-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 2rem; font-weight: 700;
+    letter-spacing: 0.15em;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+  .banner-desc { font-size: 0.9rem; margin-top: 0.6rem; color: rgba(240,208,128,0.85); letter-spacing: 0.05em; }
+ 
+  /* ── 主體 ── */
+  .main { max-width: 780px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+ 
+  /* ── 區塊卡片 ── */
+  .section-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 1.8rem;
+    overflow: hidden;
+  }
+  .section-header {
+    background: var(--paper);
+    border-bottom: 1px solid var(--border);
+    padding: 0.85rem 1.4rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .section-num {
+    background: var(--red);
+    color: var(--gold-lt);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.8rem;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-title { font-family: 'Noto Serif TC', serif; font-size: 1rem; font-weight: 700; color: var(--red); }
+  .section-body { padding: 1.4rem; }
+ 
+  /* ── 說明區 ── */
+  .notice {
+    background: #FEF9EE;
+    border: 1px solid var(--gold);
+    border-left: 4px solid var(--gold);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.8rem;
+    font-size: 0.85rem;
+    line-height: 1.9;
+    color: var(--ink-2);
+  }
+  .notice strong { color: var(--red); }
+ 
+  /* ── 表單欄位 ── */
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.4rem; }
+  .field-full { grid-column: 1 / -1; }
+ 
+  .field { display: flex; flex-direction: column; gap: 0.35rem; }
+  .field label {
+    font-size: 0.82rem; font-weight: 500;
+    color: var(--ink-2);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .field label .req { color: var(--red); font-size: 0.9em; }
+  .field input, .field select, .field textarea {
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 0.5rem 0.7rem;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: var(--white);
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none; border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(139,26,26,0.1);
+  }
+  .field textarea { resize: vertical; min-height: 80px; }
+ 
+  /* ── 商品卡片 ── */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.1rem;
+  }
+  .product-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--white);
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  .product-card.selected {
+    border-color: var(--red);
+    box-shadow: 0 0 0 2px rgba(139,26,26,0.18);
+  }
+  .product-card.out-of-stock { opacity: 0.55; pointer-events: none; }
+ 
+  .product-img {
+    width: 100%; aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    background: var(--paper);
+  }
+  .product-img-placeholder {
+    width: 100%; aspect-ratio: 4/3;
+    background: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem;
+  }
+  .product-info { padding: 0.8rem 0.9rem 0.9rem; }
+  .product-name { font-family: 'Noto Serif TC', serif; font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 0.25rem; }
+  .product-desc { font-size: 0.78rem; color: var(--ink-3); line-height: 1.6; margin-bottom: 0.5rem; }
+  .product-price { font-size: 0.88rem; color: var(--red); font-weight: 500; margin-bottom: 0.5rem; }
+ 
+  .stock-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 0.72rem;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-bottom: 0.6rem;
+  }
+  .stock-ok { background: var(--ok-lt); color: var(--ok); }
+  .stock-low { background: #FFF3CD; color: #856404; }
+  .stock-out { background: #F8D7DA; color: #721C24; }
+ 
+  .qty-row {
+    display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem;
+  }
+  .qty-btn {
+    width: 28px; height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 1rem; font-weight: 500;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .qty-btn:hover { background: var(--border); }
+  .qty-num {
+    min-width: 28px; text-align: center;
+    font-size: 0.95rem; font-weight: 500;
+    color: var(--ink);
+  }
+  .qty-label { font-size: 0.75rem; color: var(--ink-3); }
+ 
+  /* ── 勾選同意 ── */
+  .checklist { display: flex; flex-direction: column; gap: 0.6rem; }
+  .check-item {
+    display: flex; gap: 0.6rem; align-items: flex-start;
+    font-size: 0.85rem; line-height: 1.6; color: var(--ink-2);
+    cursor: pointer;
+  }
+  .check-item input[type="checkbox"] {
+    margin-top: 3px; flex-shrink: 0; accent-color: var(--red);
+    width: 15px; height: 15px;
+  }
+ 
+  /* ── 小計列 ── */
+  .order-summary {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.9rem 1.1rem;
+    margin-top: 1.4rem;
+    font-size: 0.88rem;
+  }
+  .summary-row { display: flex; justify-content: space-between; padding: 3px 0; color: var(--ink-2); }
+  .summary-total { display: flex; justify-content: space-between; padding-top: 8px; margin-top: 6px; border-top: 1px solid var(--border); font-weight: 700; font-size: 0.95rem; color: var(--ink); }
+ 
+  /* ── 送出按鈕 ── */
+  .submit-wrap { text-align: center; margin-top: 2rem; }
+  .btn-submit {
+    background: var(--red);
+    color: var(--gold-lt);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 0.85rem 3rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-submit:hover { background: var(--red-lt); }
+  .btn-submit:active { transform: scale(0.98); }
+  .btn-submit:disabled { background: var(--ink-3); cursor: not-allowed; }
+ 
+  /* ── 成功畫面 ── */
+  #success-screen {
+    display: none;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3rem 2rem;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  .success-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .success-title { font-family: 'Noto Serif TC', serif; font-size: 1.4rem; font-weight: 700; color: var(--ok); margin-bottom: 0.6rem; }
+  .success-desc { font-size: 0.9rem; color: var(--ink-2); line-height: 1.8; }
+  .success-ref { font-size: 0.82rem; color: var(--ink-3); margin-top: 0.8rem; }
+ 
+  /* ── 錯誤提示 ── */
+  .error-msg { font-size: 0.78rem; color: var(--red); margin-top: 3px; display: none; }
+  .field.invalid input, .field.invalid select, .field.invalid textarea { border-color: var(--red); }
+  .field.invalid .error-msg { display: block; }
+ 
+  /* ── 載入狀態 ── */
+  .loading-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(44,24,16,0.45);
+    z-index: 999;
+    align-items: center; justify-content: center;
+  }
+  .loading-overlay.show { display: flex; }
+  .loading-box {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    text-align: center;
+    font-family: 'Noto Serif TC', serif;
+    color: var(--red);
+    font-size: 1rem;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    margin: 0 auto 0.8rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+ 
+  @media (max-width: 560px) {
+    .field-grid { grid-template-columns: 1fr; }
+    .field-full { grid-column: 1; }
+    .products-grid { grid-template-columns: 1fr 1fr; }
+    .banner-title { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+ 
+<!-- ══ 設定區（管理員修改這裡）══════════════════════════════════════ -->
+<script>
+// ① 替換成你的 Google Apps Script 網址
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlNH3l652ZKuXgTFeyWHynI8gbPYj2jayFfh5-lm4Eg/exec';
+ 
+// ② 商品清單（修改名稱、描述、價格、圖片網址、商品ID需與試算表一致）
+const PRODUCTS = [
+  {
+    id: 'P001',
+    name: '王船紀念明信片組',
+    desc: '精選4張高質感印刷明信片，呈現王船祭經典場景，附牛皮紙信封。',
+    price: 120,
+    img: '',  // 填入圖片網址，或留空使用預設圖示
+    icon: '🗂️',
+  },
+  {
+    id: 'P002',
+    name: '東港黑鮪魚醬',
+    desc: '東港漁港現撈黑鮪魚製成，純手工炒製，口感鮮甜，適合配飯或拌麵。',
+    price: 280,
+    img: '',
+    icon: '🐟',
+  },
+  {
+    id: 'P003',
+    name: '屏東胡椒蝦調味包',
+    desc: '採用屏東黑胡椒與海鹽調配，每包可料理一斤蝦，居家輕鬆複刻名產。',
+    price: 150,
+    img: '',
+    icon: '🦐',
+  },
+  {
+    id: 'P004',
+    name: '王船文化館帆布袋',
+    desc: '天然棉帆布材質，印有王船剪影設計，耐用環保，一袋多用。',
+    price: 200,
+    img: '',
+    icon: '🛍️',
+  },
+  {
+    id: 'P005',
+    name: '東港特色便當（葷）',
+    desc: '在地食材烹調，含白飯、主菜（紅燒肉或炸魚）、兩道蔬菜，參觀當日取用。',
+    price: 100,
+    img: '',
+    icon: '🍱',
+  },
+  {
+    id: 'P006',
+    name: '東港特色便當（素）',
+    desc: '蔬食食材烹調，含白飯、豆腐主菜、兩道蔬菜，參觀當日取用。',
+    price: 100,
+    img: '',
+    icon: '🥗',
+  },
+];
+</script>
+<!-- ══════════════════════════════════════════════════════════════════ -->
+ 
+<!-- 頂部橫幅 -->
+<div class="banner">
+  <div class="banner-subtitle">財團法人屏東縣文化基金會</div>
+  <div class="banner-title">王船文化館</div>
+  <div class="banner-desc">團體導覽預約申請 ／ 伴手禮預訂</div>
+</div>
+ 
+<!-- 主體 -->
+<div class="main" id="form-area">
+ 
+  <!-- 注意事項 -->
+  <div class="notice">
+    <strong>申請須知</strong><br>
+    一、本服務供學校、機關、企業、社區等團體（20人以上）事先預約導覽及選購伴手禮／餐食。<br>
+    二、請於預定導覽日<strong>至少7個工作日前</strong>送出本申請表，預約成功將由專人電話通知。<br>
+    三、導覽時間每場60分鐘，每團限20–40人；超過40人須配合拆團分批。<br>
+    四、伴手禮及餐食須於<strong>送出申請時一併預訂</strong>，金額將於現場導覽報到時繳付。<br>
+    五、洽詢電話：(08) 833-1680 #413（週一至週五 09:00–17:00）
+  </div>
+ 
+  <!-- 導覽預約資料 -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-num">一</div>
+      <div class="section-title">導覽預約資料</div>
+    </div>
+    <div class="section-body">
+      <div class="field-grid">
+        <div class="field">
+          <label>預約日期 <span class="req">*</span></label>
+          <input type="date" id="tour-date" required>
+          <span class="error-msg">請填寫預約日期</span>
+        </div>
+        <div class="field">
+          <label>導覽開始時間 <span class="req">*</span></label>
+          <input type="time" id="tour-start" required>
+          <span class="error-msg">請填寫導覽開始時間</span>
+        </div>
+        <div class="field">
+          <label>預計離館時間 <span class="req">*</span></label>
+          <input type="time" id="tour-end" required>
+          <span class="error-msg">請填寫預計離館時間</span>
+        </div>
+        <div class="field">
+          <label>預計人數 <span class="req">*</span></label>
+          <input type="number" id="pax" min="20" max="200" placeholder="20–200" required>
+          <span class="error-msg">人數需為20人以上</span>
+        </div>
+        <div class="field field-full">
+          <label>申請單位 <span class="req">*</span></label>
+          <input type="text" id="org" placeholder="學校 / 機關 / 企業名稱" required>
+          <span class="error-msg">請填寫申請單位</span>
+        </div>
+        <div class="field">
+          <label>聯絡人姓名 <span class="req">*</span></label>
+          <input type="text" id="contact-name" required>
+          <span class="error-msg">請填寫聯絡人姓名</span>
+        </div>
+        <div class="field">
+          <label>聯絡人電話 <span class="req">*</span></label>
+          <input type="tel" id="contact-phone" placeholder="09xx-xxxxxx 或市話" required>
+          <span class="error-msg">請填寫聯絡人電話</span>
+        </div>
+        <div class="field">
+          <label>領團人姓名 <span class="req">*</span></label>
+          <input type="text" id="leader-name" required>
+          <span class="error-msg">請填寫領團人姓名</span>
+        </div>
+        <div class="field">
+          <label>領團人電話 <span class="req">*</span></label>
+          <input type="tel" id="leader-phone" required>
+          <span class="error-msg">請填寫領團人電話</span>
+        </div>
+        <div class="field field-full">
+          <label>其他需求</label>
+          <textarea id="remarks" placeholder="如有特殊需求、無障礙需求或其他事項，請在此說明"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- 伴手禮選購 -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-num">二</div>
+      <div class="section-title">伴手禮 ／ 餐食預訂（選填）</div>
+    </div>
+    <div class="section-body">
+      <p style="font-size:0.83rem;color:var(--ink-3);margin-bottom:1.1rem;">可為每位團員預先選購，金額將於現場統一收取，庫存即時顯示，超售前系統自動限制數量。</p>
+      <div class="products-grid" id="products-grid">
+        <!-- 由 JS 動態產生 -->
+      </div>
+      <div class="order-summary" id="order-summary" style="display:none;">
+        <div id="summary-items"></div>
+        <div class="summary-total"><span>合計金額（供參考，現場付款）</span><span id="summary-total-price">$0</span></div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- 重要須知確認 -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-num">三</div>
+      <div class="section-title">重要須知確認 <span style="font-size:0.8rem;color:var(--ink-3);">（請逐項閱讀並勾選）</span></div>
+    </div>
+    <div class="section-body">
+      <div class="checklist">
+        <label class="check-item"><input type="checkbox" class="must-check"> 我已了解，團體預約導覽須於活動日前7個工作日送出申請表單。</label>
+        <label class="check-item"><input type="checkbox" class="must-check"> 我已了解，導覽時須使用導覽子母機（視情況使用MIPRO隨身麥克風），每人酌收設備使用費新臺幣30元（不足20人以20人計費）。</label>
+        <label class="check-item"><input type="checkbox" class="must-check"> 我已了解，當日若無故遲到30分鐘，場館有權取消本次導覽預約。</label>
+        <label class="check-item"><input type="checkbox" class="must-check"> 我已了解，預訂之伴手禮及餐食金額將於報到時一併現場繳付，恕不接受臨時取消。</label>
+      </div>
+      <div id="check-error" style="display:none;color:var(--red);font-size:0.82rem;margin-top:0.6rem;">請勾選所有重要須知後才能送出</div>
+    </div>
+  </div>
+ 
+  <!-- 送出 -->
+  <div class="submit-wrap">
+    <button class="btn-submit" id="btn-submit" onclick="submitForm()">送出申請表單</button>
+  </div>
+ 
+  <!-- 成功畫面 -->
+  <div id="success-screen">
+    <div class="success-icon">✅</div>
+    <div class="success-title">申請表單已成功送出</div>
+    <div class="success-desc">感謝您的預約申請！<br>本館將於收件後由專人電話確認，請保持電話暢通。<br>如有急需，請致電 (08) 833-1680 #413。</div>
+    <div class="success-ref" id="success-ref"></div>
+  </div>
+</div>
+ 
+<!-- 載入 overlay -->
+<div class="loading-overlay" id="loading">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    正在送出申請，請稍候…
+  </div>
+</div>
+ 
+<script>
+// ── 庫存（從 Google Sheets 讀取，初始值先設預設）──
+let inventory = {};
+PRODUCTS.forEach(p => inventory[p.id] = 50);  // 預設50，會被實際庫存覆蓋
+let quantities = {};
+PRODUCTS.forEach(p => quantities[p.id] = 0);
+ 
+// ── 讀取即時庫存 ──
+async function fetchInventory() {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('YOUR_SCRIPT_ID')) return;
+  try {
+    const res = await fetch(APPS_SCRIPT_URL + '?action=inventory');
+    const data = await res.json();
+    Object.assign(inventory, data);
+    renderProducts();
+  } catch(e) { console.warn('庫存讀取失敗，使用預設值', e); }
+}
+ 
+// ── 渲染商品卡 ──
+function renderProducts() {
+  const grid = document.getElementById('products-grid');
+  grid.innerHTML = '';
+  PRODUCTS.forEach(p => {
+    const stock = inventory[p.id] ?? 0;
+    const qty = quantities[p.id] ?? 0;
+    const stockClass = stock <= 0 ? 'stock-out' : stock <= 5 ? 'stock-low' : 'stock-ok';
+    const stockText = stock <= 0 ? '已售完' : stock <= 5 ? `剩餘 ${stock} 份` : `庫存充足`;
+    const cardClass = qty > 0 ? 'selected' : stock <= 0 ? 'out-of-stock' : '';
+    grid.innerHTML += `
+      <div class="product-card ${cardClass}" id="card-${p.id}">
+        ${p.img
+          ? `<img class="product-img" src="${p.img}" alt="${p.name}">`
+          : `<div class="product-img-placeholder">${p.icon}</div>`}
+        <div class="product-info">
+          <div class="product-name">${p.name}</div>
+          <div class="product-desc">${p.desc}</div>
+          <div class="product-price">NT$ ${p.price.toLocaleString()} ／份</div>
+          <span class="stock-badge ${stockClass}">${stockText}</span>
+          <div class="qty-row">
+            <button class="qty-btn" onclick="changeQty('${p.id}',-1)">－</button>
+            <div class="qty-num" id="qty-${p.id}">${qty}</div>
+            <button class="qty-btn" onclick="changeQty('${p.id}',1)">＋</button>
+            <span class="qty-label">份</span>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+ 
+// ── 調整數量 ──
+function changeQty(id, delta) {
+  const stock = inventory[id] ?? 0;
+  quantities[id] = Math.max(0, Math.min(stock, (quantities[id] ?? 0) + delta));
+  document.getElementById(`qty-${id}`).textContent = quantities[id];
+  const card = document.getElementById(`card-${id}`);
+  card.classList.toggle('selected', quantities[id] > 0);
+  updateSummary();
+}
+ 
+// ── 更新小計 ──
+function updateSummary() {
+  const summary = document.getElementById('order-summary');
+  const items = PRODUCTS.filter(p => quantities[p.id] > 0);
+  if (items.length === 0) { summary.style.display = 'none'; return; }
+  summary.style.display = 'block';
+  let total = 0;
+  let html = '';
+  items.forEach(p => {
+    const sub = p.price * quantities[p.id];
+    total += sub;
+    html += `<div class="summary-row"><span>${p.name} × ${quantities[p.id]}</span><span>NT$ ${sub.toLocaleString()}</span></div>`;
+  });
+  document.getElementById('summary-items').innerHTML = html;
+  document.getElementById('summary-total-price').textContent = `NT$ ${total.toLocaleString()}`;
+}
+ 
+// ── 表單驗證 ──
+function validateForm() {
+  const required = [
+    {id:'tour-date', msg:'請填寫預約日期'},
+    {id:'tour-start', msg:'請填寫導覽開始時間'},
+    {id:'tour-end', msg:'請填寫預計離館時間'},
+    {id:'pax', msg:'人數需為20人以上', check: v => parseInt(v) >= 20},
+    {id:'org', msg:'請填寫申請單位'},
+    {id:'contact-name', msg:'請填寫聯絡人姓名'},
+    {id:'contact-phone', msg:'請填寫聯絡人電話'},
+    {id:'leader-name', msg:'請填寫領團人姓名'},
+    {id:'leader-phone', msg:'請填寫領團人電話'},
+  ];
+  let ok = true;
+  required.forEach(f => {
+    const el = document.getElementById(f.id);
+    const wrap = el.closest('.field');
+    const valid = el.value.trim() && (!f.check || f.check(el.value));
+    wrap.classList.toggle('invalid', !valid);
+    if (!valid) ok = false;
+  });
+  const checks = document.querySelectorAll('.must-check');
+  const allChecked = [...checks].every(c => c.checked);
+  document.getElementById('check-error').style.display = allChecked ? 'none' : 'block';
+  if (!allChecked) ok = false;
+  return ok;
+}
+ 
+// ── 送出 ──
+async function submitForm() {
+  if (!validateForm()) {
+    window.scrollTo({top: document.querySelector('.field.invalid')?.getBoundingClientRect().top + window.scrollY - 80 || 0, behavior:'smooth'});
+    return;
+  }
+  document.getElementById('loading').classList.add('show');
+  document.getElementById('btn-submit').disabled = true;
+ 
+  const items = PRODUCTS
+    .filter(p => quantities[p.id] > 0)
+    .map(p => ({id: p.id, name: p.name, qty: quantities[p.id], price: p.price}));
+ 
+  const payload = {
+    action: 'submit',
+    tourDate: document.getElementById('tour-date').value,
+    tourStart: document.getElementById('tour-start').value,
+    tourEnd: document.getElementById('tour-end').value,
+    pax: document.getElementById('pax').value,
+    org: document.getElementById('org').value,
+    contactName: document.getElementById('contact-name').value,
+    contactPhone: document.getElementById('contact-phone').value,
+    leaderName: document.getElementById('leader-name').value,
+    leaderPhone: document.getElementById('leader-phone').value,
+    remarks: document.getElementById('remarks').value,
+    items: items,
+  };
+ 
+  // 若還未設定 Apps Script URL，進入示範模式
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('YOUR_SCRIPT_ID')) {
+    await new Promise(r => setTimeout(r, 1200));
+    document.getElementById('loading').classList.remove('show');
+    showSuccess('DEMO-' + Date.now().toString().slice(-6));
+    return;
+  }
+ 
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    });
+    document.getElementById('loading').classList.remove('show');
+    showSuccess('REF-' + Date.now().toString().slice(-6));
+  } catch(e) {
+    document.getElementById('loading').classList.remove('show');
+    document.getElementById('btn-submit').disabled = false;
+    alert('送出失敗，請檢查網路連線或聯絡館方。');
+  }
+}
+ 
+function showSuccess(ref) {
+  document.getElementById('form-area').style.display = 'none';
+  const s = document.getElementById('success-screen');
+  s.style.display = 'block';
+  document.getElementById('success-ref').textContent = '申請編號（參考用）：' + ref;
+  window.scrollTo({top: 0, behavior:'smooth'});
+}
+ 
+// ── 初始化 ──
+renderProducts();
+fetchInventory();
+</script>
+</body>
+</html>
+ 
