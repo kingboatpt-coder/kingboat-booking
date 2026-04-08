@@ -343,11 +343,8 @@ async function submitForm(){
     items:PRODUCTS.filter(p=>quantities[p.id]>0).map(p=>({id:p.id,name:p.name,qty:quantities[p.id],price:p.price})),
   };
   try{
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'text/plain'},
-      body: JSON.stringify(payload)
-    });
+    const url = APPS_SCRIPT_URL + '?action=submit&data=' + encodeURIComponent(JSON.stringify(payload));
+    const res = await fetch(url);
     const result = await res.json().catch(()=>({success:true}));
     document.getElementById('loading').classList.remove('show');
     document.getElementById('form-area').style.display='none';
