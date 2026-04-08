@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>王船文化館｜後台管理</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#8B1A1A;--red-lt:#C0392B;--gold:#C9A84C;--gold-lt:#F0D080;--paper:#F3ECD8;--cream:#FAF6EF;--ink:#2C1810;--ink-2:#5C3D2E;--ink-3:#8B6954;--border:#D4B896;--white:#fff;--ok:#2D6A4F;--ok-lt:#D8F3DC}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+/* 登入 */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem}
+.login-box{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:2.5rem 2rem;width:100%;max-width:360px;text-align:center}
+.login-icon{font-size:2.5rem;margin-bottom:.8rem}
+.login-title{font-family:'Noto Serif TC',serif;font-size:1.2rem;color:var(--red);margin-bottom:1.5rem}
+.login-box input{width:100%;border:1px solid var(--border);border-radius:5px;padding:.6rem .8rem;font-size:.95rem;font-family:'Noto Sans TC',sans-serif;margin-bottom:.8rem}
+.login-box input:focus{outline:none;border-color:var(--red)}
+.btn{padding:.6rem 1.5rem;border:none;border-radius:5px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-size:.9rem;font-weight:500;transition:background .2s}
+.btn-primary{background:var(--red);color:var(--gold-lt);width:100%}
+.btn-primary:hover{background:var(--red-lt)}
+.btn-sm{padding:.35rem .9rem;font-size:.82rem}
+.btn-danger{background:#dc3545;color:#fff}
+.btn-danger:hover{background:#b02a37}
+.btn-secondary{background:var(--paper);color:var(--ink-2);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--border)}
+.login-err{color:var(--red);font-size:.82rem;margin-top:.5rem;display:none}
+/* 後台主體 */
+#admin-screen{display:none}
+.topbar{background:var(--red);color:var(--gold-lt);padding:.7rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-family:'Noto Serif TC',serif;font-size:1rem;letter-spacing:.08em}
+.topbar-right{font-size:.8rem;color:var(--gold);cursor:pointer}
+.tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--border)}
+.tab{padding:.75rem 1.4rem;cursor:pointer;font-size:.9rem;color:var(--ink-2);border-bottom:3px solid transparent;transition:all .2s}
+.tab.active{color:var(--red);border-bottom-color:var(--red);font-weight:500}
+.tab:hover:not(.active){background:rgba(0,0,0,.04)}
+.panel{display:none;padding:1.5rem;max-width:900px;margin:0 auto}
+.panel.active{display:block}
+/* 商品管理 */
+.product-list{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.5rem}
+.product-row{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:.9rem 1rem;display:flex;align-items:center;gap:1rem}
+.product-thumb{width:56px;height:56px;object-fit:cover;border-radius:5px;flex-shrink:0;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:1.6rem;overflow:hidden}
+.product-thumb img{width:100%;height:100%;object-fit:cover}
+.product-meta{flex:1;min-width:0}
+.product-meta-name{font-weight:500;font-size:.95rem;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-meta-sub{font-size:.78rem;color:var(--ink-3)}
+.product-stock{font-size:.82rem;color:var(--ok);background:var(--ok-lt);padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.product-actions{display:flex;gap:.5rem;flex-shrink:0}
+/* 編輯表單 */
+.form-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.4rem;margin-bottom:1rem}
+.form-card h3{font-family:'Noto Serif TC',serif;font-size:.95rem;color:var(--red);margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem 1.2rem}
+.form-full{grid-column:1/-1}
+.form-field{display:flex;flex-direction:column;gap:.3rem}
+.form-field label{font-size:.78rem;font-weight:500;color:var(--ink-2)}
+.form-field input,.form-field textarea,.form-field select{border:1px solid var(--border);border-radius:5px;padding:.45rem .65rem;font-size:.88rem;font-family:'Noto Sans TC',sans-serif;color:var(--ink);width:100%}
+.form-field input:focus,.form-field textarea:focus{outline:none;border-color:var(--red)}
+.form-field textarea{resize:vertical;min-height:70px}
+.form-actions{display:flex;gap:.6rem;margin-top:1rem;justify-content:flex-end}
+/* 設定頁 */
+.settings-section{margin-bottom:1.5rem}
+.settings-section h3{font-family:'Noto Serif TC',serif;font-size:.95rem;color:var(--red);margin-bottom:.8rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+.settings-field{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.8rem}
+.settings-field label{font-size:.78rem;font-weight:500;color:var(--ink-2)}
+.settings-field input,.settings-field textarea{border:1px solid var(--border);border-radius:5px;padding:.45rem .65rem;font-size:.88rem;font-family:'Noto Sans TC',sans-serif;color:var(--ink);width:100%}
+.settings-field input:focus,.settings-field textarea:focus{outline:none;border-color:var(--red)}
+.settings-field textarea{resize:vertical;min-height:80px}
+/* 通知 */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:.7rem 1.2rem;border-radius:6px;font-size:.88rem;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.toast.ok{background:var(--ok);color:#fff}
+.toast.err{background:#dc3545;color:#fff}
+.loading-indicator{display:none;text-align:center;padding:2rem;color:var(--ink-3);font-size:.9rem}
+.add-btn-wrap{margin-bottom:1rem}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr}.form-full{grid-column:1}.product-row{flex-wrap:wrap}.product-actions{width:100%;justify-content:flex-end}}
+</style>
+</head>
+<body>
+
+<script>
+// ══ 設定：換成你的 Apps Script 網址 ══
+const API = 'https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlNH3l652ZKuXgTFeyWHynI8gbPYj2jayFfh5-lm4Eg/exec';
+</script>
+
+<!-- 登入畫面 -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-icon">⚙️</div>
+    <div class="login-title">王船文化館 後台管理</div>
+    <input type="password" id="pw-input" placeholder="請輸入管理密碼" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn btn-primary" onclick="doLogin()">登入</button>
+    <div class="login-err" id="login-err">密碼錯誤，請重試</div>
+  </div>
+</div>
+
+<!-- 後台主體 -->
+<div id="admin-screen">
+  <div class="topbar">
+    <div class="topbar-title">⚙️ 王船文化館 後台管理</div>
+    <div class="topbar-right" onclick="logout()">登出</div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('products')">商品管理</div>
+    <div class="tab" onclick="switchTab('settings')">頁面文字</div>
+  </div>
+
+  <!-- 商品管理 -->
+  <div class="panel active" id="panel-products">
+    <div class="add-btn-wrap">
+      <button class="btn btn-primary btn-sm" onclick="openAddProduct()">＋ 新增商品</button>
+    </div>
+    <div class="loading-indicator" id="products-loading">載入商品中…</div>
+    <div class="product-list" id="product-list"></div>
+
+    <!-- 新增/編輯表單 -->
+    <div class="form-card" id="product-form" style="display:none">
+      <h3 id="product-form-title">新增商品</h3>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>商品ID（英數字，例如 P007）</label>
+          <input type="text" id="f-id" placeholder="P007">
+        </div>
+        <div class="form-field">
+          <label>商品名稱</label>
+          <input type="text" id="f-name" placeholder="例：東港黑鮪魚醬">
+        </div>
+        <div class="form-field">
+          <label>價格（NT$）</label>
+          <input type="number" id="f-price" placeholder="280">
+        </div>
+        <div class="form-field">
+          <label>庫存數量</label>
+          <input type="number" id="f-stock" placeholder="50">
+        </div>
+        <div class="form-field form-full">
+          <label>商品描述</label>
+          <textarea id="f-desc" placeholder="商品介紹文字…"></textarea>
+        </div>
+        <div class="form-field form-full">
+          <label>圖片網址（留空使用備用圖示）</label>
+          <input type="url" id="f-img" placeholder="https://...">
+        </div>
+        <div class="form-field">
+          <label>備用圖示 Emoji（無圖片時顯示）</label>
+          <input type="text" id="f-icon" placeholder="🎁">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary btn-sm" onclick="closeProductForm()">取消</button>
+        <button class="btn btn-primary btn-sm" onclick="saveProduct()">儲存商品</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 頁面文字 -->
+  <div class="panel" id="panel-settings">
+    <div class="loading-indicator" id="settings-loading">載入設定中…</div>
+    <div id="settings-content" style="display:none">
+      <div class="settings-section">
+        <h3>頂部橫幅</h3>
+        <div class="settings-field"><label>小標題（機構名稱）</label><input type="text" id="s-banner_subtitle"></div>
+        <div class="settings-field"><label>大標題（館名）</label><input type="text" id="s-banner_title"></div>
+        <div class="settings-field"><label>副標題</label><input type="text" id="s-banner_desc"></div>
+      </div>
+      <div class="settings-section">
+        <h3>申請須知（每條換行分隔）</h3>
+        <div class="settings-field"><textarea id="s-notice" style="min-height:140px"></textarea></div>
+      </div>
+      <div class="settings-section">
+        <h3>人數欄位提示文字</h3>
+        <div class="settings-field"><textarea id="s-pax_hint" style="min-height:60px"></textarea></div>
+      </div>
+      <div class="settings-section">
+        <h3>重要須知確認項目</h3>
+        <div class="settings-field"><label>第1條</label><textarea id="s-check1" style="min-height:55px"></textarea></div>
+        <div class="settings-field"><label>第2條</label><textarea id="s-check2" style="min-height:55px"></textarea></div>
+        <div class="settings-field"><label>第3條</label><textarea id="s-check3" style="min-height:55px"></textarea></div>
+        <div class="settings-field"><label>第4條</label><textarea id="s-check4" style="min-height:55px"></textarea></div>
+      </div>
+      <div class="settings-section">
+        <h3>送出成功後的訊息</h3>
+        <div class="settings-field"><textarea id="s-success_desc" style="min-height:80px"></textarea></div>
+      </div>
+      <div style="text-align:right;margin-top:.5rem">
+        <button class="btn btn-primary" onclick="saveSettings()">儲存所有設定</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let adminPw = '';
+let products = [];
+let editingId = null;
+
+// ── 登入 ──
+async function doLogin() {
+  const pw = document.getElementById('pw-input').value;
+  const res = await post({ action:'auth', password:pw });
+  if (res.ok) {
+    adminPw = pw;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'block';
+    loadProducts();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+  }
+}
+
+function logout() {
+  adminPw = '';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-screen').style.display = 'none';
+  document.getElementById('pw-input').value = '';
+}
+
+// ── 分頁 ──
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['products','settings'][i]===tab));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  if (tab==='settings') loadSettings();
+}
+
+// ── 商品 ──
+async function loadProducts() {
+  document.getElementById('products-loading').style.display = 'block';
+  document.getElementById('product-list').innerHTML = '';
+  const res = await get('products');
+  document.getElementById('products-loading').style.display = 'none';
+  products = res.products || [];
+  renderProductList();
+}
+
+function renderProductList() {
+  const list = document.getElementById('product-list');
+  if (!products.length) { list.innerHTML = '<p style="color:var(--ink-3);font-size:.88rem;">尚無商品，請點「新增商品」新增。</p>'; return; }
+  list.innerHTML = '';
+  products.forEach(p => {
+    const thumb = p.img
+      ? `<div class="product-thumb"><img src="${p.img}" onerror="this.outerHTML='<span>${p.icon||'🎁'}</span>'"></div>`
+      : `<div class="product-thumb">${p.icon||'🎁'}</div>`;
+    list.innerHTML += `
+      <div class="product-row">
+        ${thumb}
+        <div class="product-meta">
+          <div class="product-meta-name">${p.name}</div>
+          <div class="product-meta-sub">ID: ${p.id} ｜ NT$${Number(p.price).toLocaleString()} ／份</div>
+        </div>
+        <span class="product-stock">庫存 ${p.stock}</span>
+        <div class="product-actions">
+          <button class="btn btn-secondary btn-sm" onclick="openEditProduct('${p.id}')">編輯</button>
+          <button class="btn btn-danger btn-sm" onclick="confirmDelete('${p.id}','${p.name}')">刪除</button>
+        </div>
+      </div>`;
+  });
+}
+
+function openAddProduct() {
+  editingId = null;
+  document.getElementById('product-form-title').textContent = '新增商品';
+  ['id','name','price','stock','desc','img','icon'].forEach(k => document.getElementById('f-'+k).value = '');
+  document.getElementById('f-id').disabled = false;
+  document.getElementById('product-form').style.display = 'block';
+  document.getElementById('product-form').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openEditProduct(id) {
+  const p = products.find(x => x.id===id);
+  if (!p) return;
+  editingId = id;
+  document.getElementById('product-form-title').textContent = '編輯商品';
+  document.getElementById('f-id').value    = p.id;
+  document.getElementById('f-id').disabled = true;
+  document.getElementById('f-name').value  = p.name;
+  document.getElementById('f-price').value = p.price;
+  document.getElementById('f-stock').value = p.stock;
+  document.getElementById('f-desc').value  = p.desc;
+  document.getElementById('f-img').value   = p.img;
+  document.getElementById('f-icon').value  = p.icon;
+  document.getElementById('product-form').style.display = 'block';
+  document.getElementById('product-form').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function closeProductForm() {
+  document.getElementById('product-form').style.display = 'none';
+}
+
+async function saveProduct() {
+  const id = editingId || document.getElementById('f-id').value.trim();
+  if (!id || !document.getElementById('f-name').value.trim()) { showToast('請填寫商品ID和名稱','err'); return; }
+  const res = await post({
+    action:'saveProduct', password:adminPw,
+    id, name:document.getElementById('f-name').value,
+    price:document.getElementById('f-price').value,
+    stock:document.getElementById('f-stock').value,
+    desc:document.getElementById('f-desc').value,
+    img:document.getElementById('f-img').value,
+    icon:document.getElementById('f-icon').value||'🎁',
+  });
+  if (res.success) { showToast('商品已儲存','ok'); closeProductForm(); loadProducts(); }
+  else showToast('儲存失敗：'+res.error,'err');
+}
+
+async function confirmDelete(id, name) {
+  if (!confirm(`確定要刪除「${name}」嗎？`)) return;
+  const res = await post({ action:'deleteProduct', password:adminPw, id });
+  if (res.success) { showToast('已刪除','ok'); loadProducts(); }
+  else showToast('刪除失敗','err');
+}
+
+// ── 設定 ──
+async function loadSettings() {
+  document.getElementById('settings-loading').style.display = 'block';
+  document.getElementById('settings-content').style.display = 'none';
+  const res = await get('settings');
+  document.getElementById('settings-loading').style.display = 'none';
+  document.getElementById('settings-content').style.display = 'block';
+  const s = res.settings || {};
+  Object.entries(s).forEach(([k,v]) => {
+    const el = document.getElementById('s-'+k);
+    if (el) el.value = v;
+  });
+}
+
+async function saveSettings() {
+  const keys = ['banner_subtitle','banner_title','banner_desc','notice','pax_hint','check1','check2','check3','check4','success_desc'];
+  const settings = {};
+  keys.forEach(k => {
+    const el = document.getElementById('s-'+k);
+    if (el) settings[k] = el.value;
+  });
+  const res = await post({ action:'saveSettings', password:adminPw, settings });
+  if (res.success) showToast('設定已儲存，網頁會自動更新','ok');
+  else showToast('儲存失敗：'+res.error,'err');
+}
+
+// ── API ──
+async function get(action) {
+  const res = await fetch(API+'?action='+action);
+  return res.json();
+}
+async function post(body) {
+  try {
+    const res = await fetch(API, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    // no-cors 無法讀取回應，改用 cors 嘗試
+  } catch(e){}
+  // 改用可讀取回應的方式
+  try {
+    const res = await fetch(API, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body) });
+    return res.json();
+  } catch(e) { return { success:false, error:e.message }; }
+}
+
+// ── Toast ──
+let toastTimer;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
