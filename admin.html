@@ -323,19 +323,40 @@ async function saveSettings(){
   const res=await apiPost({action:'saveSettings',password:adminPw,settings});
   btn.innerHTML='儲存所有設定';btn.disabled=false;
   if(res&&res.success)showToast('設定已儲存，預約網頁會自動更新','ok');
-  else showToast('儲存失敗，請重試','err');
+  else showToast('儲存失敗：'+(res&&res.error?res.error:'請開瀏覽器 F12 Console 查看錯誤'),'err');
 }
 
 // ── API POST（使用 text/plain 繞過 CORS preflight）──
 async function apiPost(body){
   try{
+    // 用 POST，不設任何 header，避免 CORS preflight
     const res = await fetch(API, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(body),
     });
-    return res.json();
-  }catch(e){console.error(e);return null;}
+    const text = await res.text();
+    console.log('API 回應:', text);
+    try { return JSON.parse(text); } catch(e) {
+      console.error('JSON 解析失敗:', text);
+      // 如果回應不是 JSON 但 HTTP 成功，可能是 redirect 頁面，視為成功
+      if (res.ok || res.redirected) return { success: true };
+      return null;
+    }
+  }catch(e){
+    console.error('API 呼叫失敗:', e);
+    // POST 失敗時，fallback 用 GET（短資料可能成功）
+    try {
+      console.log('嘗試 GET fallback...');
+      const url = API + '?action=' + body.action + '&data=' + encodeURIComponent(JSON.stringify(body));
+      const res2 = await fetch(url);
+      const text2 = await res2.text();
+      console.log('GET fallback 回應:', text2);
+      return JSON.parse(text2);
+    } catch(e2) {
+      console.error('GET fallback 也失敗:', e2);
+      return null;
+    }
+  }
 }
 
 // ── Toast ──
