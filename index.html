@@ -7,165 +7,151 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --red:#8B1A1A; --red-lt:#C0392B; --gold:#C9A84C; --gold-lt:#F0D080;
-    --cream:#FAF6EF; --paper:#F3ECD8; --ink:#2C1810; --ink-2:#5C3D2E;
-    --ink-3:#8B6954; --border:#D4B896; --white:#FFFFFF;
-    --ok:#2D6A4F; --ok-lt:#D8F3DC;
-  }
-  body { font-family:'Noto Sans TC',sans-serif; background:var(--cream); color:var(--ink); min-height:100vh; }
-  .banner { background:var(--red); color:var(--gold-lt); text-align:center; padding:2.5rem 1rem 2rem; position:relative; overflow:hidden; }
-  .banner::before { content:''; position:absolute; inset:0; background-image: repeating-linear-gradient(90deg,transparent 0,transparent 28px,rgba(201,168,76,.12) 28px,rgba(201,168,76,.12) 29px), repeating-linear-gradient(0deg,transparent 0,transparent 28px,rgba(201,168,76,.12) 28px,rgba(201,168,76,.12) 29px); pointer-events:none; }
-  .banner-subtitle { font-size:.85rem; letter-spacing:.3em; color:var(--gold); margin-bottom:.4rem; }
-  .banner-title { font-family:'Noto Serif TC',serif; font-size:2rem; font-weight:700; letter-spacing:.15em; text-shadow:0 2px 6px rgba(0,0,0,.3); }
-  .banner-desc { font-size:.9rem; margin-top:.6rem; color:rgba(240,208,128,.85); letter-spacing:.05em; }
-  .main { max-width:780px; margin:0 auto; padding:2rem 1rem 4rem; }
-  .section-card { background:var(--white); border:1px solid var(--border); border-radius:8px; margin-bottom:1.8rem; overflow:hidden; }
-  .section-header { background:var(--paper); border-bottom:1px solid var(--border); padding:.85rem 1.4rem; display:flex; align-items:center; gap:.6rem; }
-  .section-num { background:var(--red); color:var(--gold-lt); font-family:'Noto Serif TC',serif; font-size:.8rem; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .section-title { font-family:'Noto Serif TC',serif; font-size:1rem; font-weight:700; color:var(--red); }
-  .section-body { padding:1.4rem; }
-  .notice { background:#FEF9EE; border:1px solid var(--gold); border-left:4px solid var(--gold); border-radius:4px; padding:1rem 1.2rem; margin-bottom:1.8rem; font-size:.85rem; line-height:1.9; color:var(--ink-2); }
-  .notice strong { color:var(--red); }
-  .field-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem 1.4rem; }
-  .field-full { grid-column:1/-1; }
-  .field { display:flex; flex-direction:column; gap:.35rem; }
-  .field label { font-size:.82rem; font-weight:500; color:var(--ink-2); display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
-  .req { color:var(--red); }
-  .opt { font-size:.75rem; color:var(--ink-3); font-weight:400; }
-  .field input, .field select, .field textarea { border:1px solid var(--border); border-radius:5px; padding:.5rem .7rem; font-family:'Noto Sans TC',sans-serif; font-size:.9rem; color:var(--ink); background:var(--white); transition:border-color .2s; width:100%; }
-  .field input:focus, .field select:focus, .field textarea:focus { outline:none; border-color:var(--red); box-shadow:0 0 0 3px rgba(139,26,26,.1); }
-  .field textarea { resize:vertical; min-height:80px; }
-  .field-hint { font-size:.76rem; color:#856404; background:#FFF3CD; border-radius:4px; padding:5px 8px; margin-top:2px; line-height:1.5; }
-  .error-msg { font-size:.78rem; color:var(--red); margin-top:3px; display:none; }
-  .field.invalid input, .field.invalid select { border-color:var(--red); }
-  .field.invalid .error-msg { display:block; }
-  .products-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1.1rem; }
-  .product-card { border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--white); transition:box-shadow .2s,border-color .2s; }
-  .product-card.selected { border-color:var(--red); box-shadow:0 0 0 2px rgba(139,26,26,.18); }
-  .product-card.out-of-stock { opacity:.55; pointer-events:none; }
-  .product-img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
-  .product-img-placeholder { width:100%; aspect-ratio:4/3; background:var(--paper); display:flex; align-items:center; justify-content:center; font-size:3rem; }
-  .product-info { padding:.8rem .9rem .9rem; }
-  .product-name { font-family:'Noto Serif TC',serif; font-size:.95rem; font-weight:700; color:var(--ink); margin-bottom:.25rem; }
-  .product-desc { font-size:.78rem; color:var(--ink-3); line-height:1.6; margin-bottom:.5rem; }
-  .product-price { font-size:.88rem; color:var(--red); font-weight:500; margin-bottom:.5rem; }
-  .stock-badge { display:inline-flex; align-items:center; font-size:.72rem; padding:2px 7px; border-radius:20px; margin-bottom:.6rem; }
-  .stock-ok { background:var(--ok-lt); color:var(--ok); }
-  .stock-low { background:#FFF3CD; color:#856404; }
-  .stock-out { background:#F8D7DA; color:#721C24; }
-  .qty-row { display:flex; align-items:center; gap:.5rem; margin-top:.4rem; }
-  .qty-btn { width:28px; height:28px; border:1px solid var(--border); border-radius:4px; background:var(--paper); color:var(--ink); font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .qty-btn:hover { background:var(--border); }
-  .qty-num { min-width:28px; text-align:center; font-size:.95rem; font-weight:500; }
-  .qty-label { font-size:.75rem; color:var(--ink-3); }
-  .skeleton { border:1px solid var(--border); border-radius:8px; overflow:hidden; }
-  .skeleton-img { width:100%; aspect-ratio:4/3; background:linear-gradient(90deg,var(--paper) 25%,var(--border) 50%,var(--paper) 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; }
-  .skeleton-body { padding:.8rem; display:flex; flex-direction:column; gap:.5rem; }
-  .skeleton-line { height:12px; border-radius:4px; background:linear-gradient(90deg,var(--paper) 25%,var(--border) 50%,var(--paper) 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; }
-  .skeleton-line.short { width:55%; }
-  @keyframes shimmer { to { background-position:-200% 0; } }
-  .order-summary { background:var(--paper); border:1px solid var(--border); border-radius:6px; padding:.9rem 1.1rem; margin-top:1.4rem; font-size:.88rem; }
-  .summary-row { display:flex; justify-content:space-between; padding:3px 0; color:var(--ink-2); }
-  .summary-total { display:flex; justify-content:space-between; padding-top:8px; margin-top:6px; border-top:1px solid var(--border); font-weight:700; font-size:.95rem; }
-  .checklist { display:flex; flex-direction:column; gap:.6rem; }
-  .check-item { display:flex; gap:.6rem; align-items:flex-start; font-size:.85rem; line-height:1.6; color:var(--ink-2); cursor:pointer; }
-  .check-item input[type="checkbox"] { margin-top:3px; flex-shrink:0; accent-color:var(--red); width:15px; height:15px; }
-  .submit-wrap { text-align:center; margin-top:2rem; }
-  .btn-submit { background:var(--red); color:var(--gold-lt); font-family:'Noto Serif TC',serif; font-size:1rem; font-weight:700; letter-spacing:.15em; padding:.85rem 3rem; border:none; border-radius:6px; cursor:pointer; transition:background .2s; }
-  .btn-submit:hover { background:var(--red-lt); }
-  .btn-submit:disabled { background:var(--ink-3); cursor:not-allowed; }
-  #success-screen { display:none; background:var(--white); border:1px solid var(--border); border-radius:8px; padding:3rem 2rem; text-align:center; margin-top:2rem; }
-  .success-icon { font-size:3rem; margin-bottom:1rem; }
-  .success-title { font-family:'Noto Serif TC',serif; font-size:1.4rem; font-weight:700; color:var(--ok); margin-bottom:.6rem; }
-  .success-desc { font-size:.9rem; color:var(--ink-2); line-height:1.8; }
-  .success-ref { font-size:.82rem; color:var(--ink-3); margin-top:.8rem; }
-  .loading-overlay { display:none; position:fixed; inset:0; background:rgba(44,24,16,.45); z-index:999; align-items:center; justify-content:center; }
-  .loading-overlay.show { display:flex; }
-  .loading-box { background:var(--white); border-radius:8px; padding:1.5rem 2rem; text-align:center; font-family:'Noto Serif TC',serif; color:var(--red); }
-  .spinner { width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--red); border-radius:50%; animation:spin .9s linear infinite; margin:0 auto .8rem; }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  @media (max-width:560px) { .field-grid { grid-template-columns:1fr; } .field-full { grid-column:1; } .products-grid { grid-template-columns:1fr 1fr; } .banner-title { font-size:1.5rem; } }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#8B1A1A;--red-lt:#C0392B;--gold:#C9A84C;--gold-lt:#F0D080;--cream:#FAF6EF;--paper:#F3ECD8;--ink:#2C1810;--ink-2:#5C3D2E;--ink-3:#8B6954;--border:#D4B896;--white:#fff;--ok:#2D6A4F;--ok-lt:#D8F3DC}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+.banner{background:var(--red);color:var(--gold-lt);text-align:center;padding:2.5rem 1rem 2rem;position:relative;overflow:hidden}
+.banner::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(90deg,transparent 0,transparent 28px,rgba(201,168,76,.12) 28px,rgba(201,168,76,.12) 29px),repeating-linear-gradient(0deg,transparent 0,transparent 28px,rgba(201,168,76,.12) 28px,rgba(201,168,76,.12) 29px);pointer-events:none}
+.banner-subtitle{font-size:.85rem;letter-spacing:.3em;color:var(--gold);margin-bottom:.4rem}
+.banner-title{font-family:'Noto Serif TC',serif;font-size:2rem;font-weight:700;letter-spacing:.15em;text-shadow:0 2px 6px rgba(0,0,0,.3)}
+.banner-desc{font-size:.9rem;margin-top:.6rem;color:rgba(240,208,128,.85);letter-spacing:.05em}
+.main{max-width:780px;margin:0 auto;padding:2rem 1rem 4rem}
+.section-card{background:var(--white);border:1px solid var(--border);border-radius:8px;margin-bottom:1.8rem;overflow:hidden}
+.section-header{background:var(--paper);border-bottom:1px solid var(--border);padding:.85rem 1.4rem;display:flex;align-items:center;gap:.6rem}
+.section-num{background:var(--red);color:var(--gold-lt);font-family:'Noto Serif TC',serif;font-size:.8rem;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.section-title{font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;color:var(--red)}
+.section-body{padding:1.4rem}
+.notice{background:#FEF9EE;border:1px solid var(--gold);border-left:4px solid var(--gold);border-radius:4px;padding:1rem 1.2rem;margin-bottom:1.8rem;font-size:.85rem;line-height:1.9;color:var(--ink-2)}
+.notice strong{color:var(--red)}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem 1.4rem}
+.field-full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:.35rem}
+.field label{font-size:.82rem;font-weight:500;color:var(--ink-2);display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.req{color:var(--red)}.opt{font-size:.75rem;color:var(--ink-3);font-weight:400}
+.field input,.field select,.field textarea{border:1px solid var(--border);border-radius:5px;padding:.5rem .7rem;font-family:'Noto Sans TC',sans-serif;font-size:.9rem;color:var(--ink);background:var(--white);transition:border-color .2s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(139,26,26,.1)}
+.field textarea{resize:vertical;min-height:80px}
+.field-hint{font-size:.76rem;color:#856404;background:#FFF3CD;border-radius:4px;padding:5px 8px;margin-top:2px;line-height:1.5}
+.error-msg{font-size:.78rem;color:var(--red);margin-top:3px;display:none}
+.field.invalid input,.field.invalid select{border-color:var(--red)}
+.field.invalid .error-msg{display:block}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.1rem}
+.product-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--white);transition:box-shadow .2s,border-color .2s}
+.product-card.selected{border-color:var(--red);box-shadow:0 0 0 2px rgba(139,26,26,.18)}
+.product-card.out-of-stock{opacity:.55;pointer-events:none}
+.product-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+.product-img-placeholder{width:100%;aspect-ratio:4/3;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:3rem}
+.product-info{padding:.8rem .9rem .9rem}
+.product-name{font-family:'Noto Serif TC',serif;font-size:.95rem;font-weight:700;color:var(--ink);margin-bottom:.25rem}
+.product-desc{font-size:.78rem;color:var(--ink-3);line-height:1.6;margin-bottom:.5rem}
+.product-price{font-size:.88rem;color:var(--red);font-weight:500;margin-bottom:.5rem}
+.stock-badge{display:inline-flex;align-items:center;font-size:.72rem;padding:2px 7px;border-radius:20px;margin-bottom:.6rem}
+.stock-ok{background:var(--ok-lt);color:var(--ok)}.stock-low{background:#FFF3CD;color:#856404}.stock-out{background:#F8D7DA;color:#721C24}
+.qty-row{display:flex;align-items:center;gap:.5rem;margin-top:.4rem}
+.qty-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:4px;background:var(--paper);color:var(--ink);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.qty-btn:hover{background:var(--border)}
+.qty-num{min-width:28px;text-align:center;font-size:.95rem;font-weight:500}
+.qty-label{font-size:.75rem;color:var(--ink-3)}
+.skeleton{border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.skeleton-img{width:100%;aspect-ratio:4/3;background:linear-gradient(90deg,var(--paper) 25%,var(--border) 50%,var(--paper) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+.skeleton-body{padding:.8rem;display:flex;flex-direction:column;gap:.5rem}
+.skeleton-line{height:12px;border-radius:4px;background:linear-gradient(90deg,var(--paper) 25%,var(--border) 50%,var(--paper) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
+.skeleton-line.short{width:55%}
+@keyframes shimmer{to{background-position:-200% 0}}
+.order-summary{background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:.9rem 1.1rem;margin-top:1.4rem;font-size:.88rem}
+.summary-row{display:flex;justify-content:space-between;padding:3px 0;color:var(--ink-2)}
+.summary-total{display:flex;justify-content:space-between;padding-top:8px;margin-top:6px;border-top:1px solid var(--border);font-weight:700;font-size:.95rem}
+.checklist{display:flex;flex-direction:column;gap:.8rem}
+.check-item{display:flex;gap:.7rem;align-items:flex-start;font-size:.85rem;line-height:1.65;color:var(--ink-2);cursor:pointer}
+.check-item input[type="checkbox"]{margin-top:3px;flex-shrink:0;accent-color:var(--red);width:15px;height:15px}
+.submit-wrap{text-align:center;margin-top:2rem}
+.btn-submit{background:var(--red);color:var(--gold-lt);font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;letter-spacing:.15em;padding:.85rem 3rem;border:none;border-radius:6px;cursor:pointer;transition:background .2s}
+.btn-submit:hover{background:var(--red-lt)}
+.btn-submit:disabled{background:var(--ink-3);cursor:not-allowed}
+#success-screen{display:none;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:3rem 2rem;text-align:center;margin-top:2rem}
+.success-icon{font-size:3rem;margin-bottom:1rem}
+.success-title{font-family:'Noto Serif TC',serif;font-size:1.4rem;font-weight:700;color:var(--ok);margin-bottom:.6rem}
+.success-desc{font-size:.9rem;color:var(--ink-2);line-height:1.8}
+.success-ref{font-size:.82rem;color:var(--ink-3);margin-top:.8rem}
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(44,24,16,.45);z-index:999;align-items:center;justify-content:center}
+.loading-overlay.show{display:flex}
+.loading-box{background:var(--white);border-radius:8px;padding:1.5rem 2rem;text-align:center;font-family:'Noto Serif TC',serif;color:var(--red)}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto .8rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:560px){.field-grid{grid-template-columns:1fr}.field-full{grid-column:1}.products-grid{grid-template-columns:1fr 1fr}.banner-title{font-size:1.5rem}}
 </style>
 </head>
 <body>
-
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlNH3l652ZKuXgTFeyWHynI8gbPYj2jayFfh5-lm4Eg/exec';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlNH3l652ZKuXgTFeyWHynI8gbPYj2jayFfh5-lm4Eg/exec';
 </script>
 
 <div class="banner">
-  <div class="banner-subtitle">財團法人屏東縣文化基金會</div>
-  <div class="banner-title">王船文化館</div>
-  <div class="banner-desc">團體導覽預約申請 ／ 伴手禮預訂</div>
+  <div class="banner-subtitle" id="s-banner_subtitle">財團法人屏東縣文化基金會</div>
+  <div class="banner-title" id="s-banner_title">王船文化館</div>
+  <div class="banner-desc" id="s-banner_desc">團體導覽預約申請 ／ 伴手禮預訂</div>
 </div>
 
 <div class="main" id="form-area">
-  <div class="notice"><strong>申請須知</strong><br><span id="notice-body">一、本服務供學校、機關、企業、社區等團體事先預約導覽及選購伴手禮／餐食。<br>二、請於預定導覽日至少7個工作日前送出本申請表，預約成功將由專人電話通知。<br>三、導覽時間每場60分鐘，每團限20–40人；超過40人須配合拆團分批。<br>四、伴手禮及餐食須於送出申請時一併預訂，金額將於現場導覽報到時繳付。<br>五、洽詢電話：(08) 833-1680 #413（週一至週五 09:00–17:00）</span></div>
+  <div class="notice" id="s-notice">
+    一、本服務供學校、機關、企業、社區等團體事先預約導覽及選購伴手禮／餐食。<br>
+    二、請於預定導覽日<strong>至少7個工作日前</strong>送出本申請表，預約成功將由專人電話通知。<br>
+    三、導覽時間每場60分鐘，每團限20–40人；超過40人須配合拆團分批。<br>
+    四、伴手禮及餐食須於<strong>送出申請時一併預訂</strong>，金額將於現場導覽報到時繳付。<br>
+    五、洽詢電話：(08) 833-1680 #413（週一至週五 09:00–17:00）
+  </div>
 
   <div class="section-card">
     <div class="section-header"><div class="section-num">一</div><div class="section-title">導覽預約資料</div></div>
     <div class="section-body">
       <div class="field-grid">
-
         <div class="field">
           <label>預約日期 <span class="req">*</span></label>
           <input type="date" id="tour-date">
           <span class="error-msg">請填寫預約日期</span>
         </div>
-
         <div class="field">
           <label>導覽開始時間 <span class="req">*</span></label>
           <select id="tour-start"><option value="">請選擇時間</option></select>
           <span class="error-msg">請選擇導覽開始時間</span>
         </div>
-
         <div class="field">
           <label>預計離館時間 <span class="opt">（選填）</span></label>
           <select id="tour-end"><option value="">請選擇時間</option></select>
         </div>
-
         <div class="field">
           <label>預計人數 <span class="req">*</span></label>
           <input type="number" id="pax" min="1" placeholder="請輸入人數">
-          <div class="field-hint" id="pax-hint">本館預約導覽最低收取 20人 × NT$30 費用，不滿20人仍以20人計費（NT$600）。</div>
+          <div class="field-hint" id="s-pax_hint">本館預約導覽最低收取 20人 × NT$30 費用，不滿20人仍以20人計費（NT$600）。</div>
           <span class="error-msg">請填寫人數</span>
         </div>
-
         <div class="field field-full">
           <label>申請單位 <span class="req">*</span></label>
           <input type="text" id="org" placeholder="學校 / 機關 / 企業名稱">
           <span class="error-msg">請填寫申請單位</span>
         </div>
-
         <div class="field">
           <label>聯絡人姓名 <span class="req">*</span></label>
           <input type="text" id="contact-name">
           <span class="error-msg">請填寫聯絡人姓名</span>
         </div>
-
         <div class="field">
           <label>聯絡人電話 <span class="req">*</span></label>
           <input type="tel" id="contact-phone" placeholder="09xx-xxxxxx 或市話">
           <span class="error-msg">請填寫聯絡人電話</span>
         </div>
-
         <div class="field">
           <label>領團人姓名 <span class="opt">（選填）</span></label>
           <input type="text" id="leader-name">
         </div>
-
         <div class="field">
           <label>領團人電話 <span class="opt">（選填）</span></label>
           <input type="tel" id="leader-phone">
         </div>
-
         <div class="field field-full">
           <label>其他需求</label>
           <textarea id="remarks" placeholder="如有特殊需求、無障礙需求或其他事項，請在此說明"></textarea>
         </div>
-
       </div>
     </div>
   </div>
@@ -179,7 +165,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWL
         <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
         <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
       </div>
-      <div class="order-summary" id="order-summary" style="display:none;">
+      <div class="order-summary" id="order-summary" style="display:none">
         <div id="summary-items"></div>
         <div class="summary-total"><span>合計金額（供參考，現場付款）</span><span id="summary-total-price">NT$0</span></div>
       </div>
@@ -190,10 +176,10 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWL
     <div class="section-header"><div class="section-num">三</div><div class="section-title">重要須知確認 <span style="font-size:.8rem;color:var(--ink-3);">（請逐項閱讀並勾選）</span></div></div>
     <div class="section-body">
       <div class="checklist">
-        <label class="check-item"><input type="checkbox" class="must-check"> <span id="chk1">我已了解，團體預約導覽須於活動日前7個工作日送出申請表單。</span></label>
-        <label class="check-item"><input type="checkbox" class="must-check"> <span id="chk2">我已了解，導覽時須使用導覽子母機</span>（視情況使用MIPRO隨身麥克風），每人酌收設備使用費新臺幣30元；不足20人仍以20人計費（NT$600）。</label>
-        <label class="check-item"><input type="checkbox" class="must-check"> <span id="chk3">我已了解，當日若無故遲到30分鐘</span>，場館有權取消本次導覽預約。</label>
-        <label class="check-item"><input type="checkbox" class="must-check"> <span id="chk4">我已了解，預訂之伴手禮及餐食金額</span>將於報到時一併現場繳付，恕不接受臨時取消。</label>
+        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check1">我已了解，團體預約導覽須於活動日前7個工作日送出申請表單。</span></label>
+        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check2">我已了解，導覽時須使用導覽子母機（視情況使用MIPRO隨身麥克風），每人酌收設備使用費新臺幣30元；不足20人仍以20人計費（NT$600）。</span></label>
+        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check3">我已了解，當日若無故遲到30分鐘，場館有權取消本次導覽預約。</span></label>
+        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check4">我已了解，預訂之伴手禮及餐食金額將於報到時一併現場繳付，恕不接受臨時取消。</span></label>
       </div>
       <div id="check-error" style="display:none;color:var(--red);font-size:.82rem;margin-top:.6rem;">請勾選所有重要須知後才能送出</div>
     </div>
@@ -206,7 +192,7 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWL
   <div id="success-screen">
     <div class="success-icon">✅</div>
     <div class="success-title">申請表單已成功送出</div>
-    <div class="success-desc">感謝您的預約申請！<br>本館將於收件後由專人電話確認，請保持電話暢通。<br>如有急需，請致電 (08) 833-1680 #413。</div>
+    <div class="success-desc" id="s-success_desc">感謝您的預約申請！<br>本館將於收件後由專人電話確認，請保持電話暢通。<br>如有急需，請致電 (08) 833-1680 #413。</div>
     <div class="success-ref" id="success-ref"></div>
   </div>
 </div>
@@ -216,89 +202,70 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWL
 </div>
 
 <script>
-// 時間下拉選單
-function buildTime(id, minH, minM, maxH, maxM) {
-  const sel = document.getElementById(id);
-  for (let h = minH; h <= maxH; h++) {
-    for (let m = 0; m <= 45; m += 15) {
-      if (h === minH && m < minM) continue;
-      if (h === maxH && m > maxM) continue;
-      const v = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-      sel.innerHTML += `<option value="${v}">${v}</option>`;
-    }
+// 時間選單
+function buildTime(id,minH,minM,maxH,maxM){
+  const sel=document.getElementById(id);
+  for(let h=minH;h<=maxH;h++){for(let m=0;m<=45;m+=15){
+    if(h===minH&&m<minM)continue;if(h===maxH&&m>maxM)continue;
+    const v=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+    sel.innerHTML+=`<option value="${v}">${v}</option>`;
+  }}
+}
+buildTime('tour-start',9,0,15,45);
+buildTime('tour-end',9,0,18,0);
+
+let PRODUCTS=[],inventory={},quantities={};
+
+// 套用後台設定到頁面
+function applySettings(s){
+  const set=(id,val)=>{const el=document.getElementById('s-'+id);if(el&&val)el.textContent=val;};
+  set('banner_subtitle',s.banner_subtitle);
+  set('banner_title',   s.banner_title);
+  set('banner_desc',    s.banner_desc);
+  set('pax_hint',       s.pax_hint);
+  set('check1',         s.check1);
+  set('check2',         s.check2);
+  set('check3',         s.check3);
+  set('check4',         s.check4);
+  if(s.success_desc){
+    const el=document.getElementById('s-success_desc');
+    if(el) el.innerHTML=s.success_desc.replace(/\n/g,'<br>');
+  }
+  if(s.notice){
+    const el=document.getElementById('s-notice');
+    if(el) el.innerHTML=s.notice.replace(/\n/g,'<br>');
   }
 }
-buildTime('tour-start', 9, 0, 15, 45);
-buildTime('tour-end',   9, 0, 18,  0);
 
-// 商品
-let PRODUCTS = [], inventory = {}, quantities = {};
-
-async function fetchAll() {
-  // 同時載入商品和頁面設定
-  try {
-    const [prodRes, settRes] = await Promise.all([
-      fetch(APPS_SCRIPT_URL + '?action=products').then(r=>r.json()),
-      fetch(APPS_SCRIPT_URL + '?action=settings').then(r=>r.json()),
+async function fetchAll(){
+  try{
+    const[pr,sr]=await Promise.all([
+      fetch(APPS_SCRIPT_URL+'?action=products').then(r=>r.json()),
+      fetch(APPS_SCRIPT_URL+'?action=settings').then(r=>r.json()),
     ]);
-    // 套用設定
-    if (settRes.settings) applySettings(settRes.settings);
-    // 套用商品
-    if (prodRes.products && prodRes.products.length) {
-      PRODUCTS = prodRes.products;
-      PRODUCTS.forEach(p => { inventory[p.id] = p.stock; quantities[p.id] = 0; });
+    if(sr.settings) applySettings(sr.settings);
+    if(pr.products&&pr.products.length){
+      PRODUCTS=pr.products;
+      PRODUCTS.forEach(p=>{inventory[p.id]=p.stock;quantities[p.id]=0;});
       renderProducts();
     } else {
-      document.getElementById('products-grid').innerHTML = '<p style="color:var(--ink-3);font-size:.85rem;">目前無商品資料。</p>';
+      document.getElementById('products-grid').innerHTML='<p style="color:var(--ink-3);font-size:.85rem;">目前無商品資料。</p>';
     }
-  } catch(e) {
-    document.getElementById('products-grid').innerHTML = '<p style="color:var(--ink-3);font-size:.85rem;">商品資料載入失敗，請重新整理頁面。</p>';
+  }catch(e){
+    document.getElementById('products-grid').innerHTML='<p style="color:var(--ink-3);font-size:.85rem;">商品資料載入失敗，請重新整理頁面。</p>';
   }
 }
 
-function applySettings(s) {
-  if (s.banner_subtitle) document.querySelector('.banner-subtitle').textContent = s.banner_subtitle;
-  if (s.banner_title)    document.querySelector('.banner-title').textContent    = s.banner_title;
-  if (s.banner_desc)     document.querySelector('.banner-desc').textContent     = s.banner_desc;
-  if (s.notice) {
-    const lines = s.notice.split('\n').filter(l=>l.trim());
-    document.getElementById('notice-body').innerHTML = lines.map(l=>`<span>${l}</span>`).join('<br>');
-  }
-  if (s.pax_hint)     document.getElementById('pax-hint').textContent     = s.pax_hint;
-  if (s.check1)       document.getElementById('chk1').textContent          = s.check1;
-  if (s.check2)       document.getElementById('chk2').textContent          = s.check2;
-  if (s.check3)       document.getElementById('chk3').textContent          = s.check3;
-  if (s.check4)       document.getElementById('chk4').textContent          = s.check4;
-  if (s.success_desc) document.querySelector('.success-desc').innerHTML    = s.success_desc.replace(/\n/g,'<br>');
-}
-
-async function fetchProducts() {
-  try {
-    const res = await fetch(APPS_SCRIPT_URL);
-    const data = await res.json();
-    if (data.products && data.products.length) {
-      PRODUCTS = data.products;
-      PRODUCTS.forEach(p => { inventory[p.id] = p.stock; quantities[p.id] = 0; });
-      renderProducts();
-    } else {
-      document.getElementById('products-grid').innerHTML = '<p style="color:var(--ink-3);font-size:.85rem;">目前無商品資料。</p>';
-    }
-  } catch(e) {
-    document.getElementById('products-grid').innerHTML = '<p style="color:var(--ink-3);font-size:.85rem;">商品資料載入失敗，請重新整理頁面。</p>';
-  }
-}
-
-function renderProducts() {
-  const grid = document.getElementById('products-grid');
-  grid.innerHTML = '';
-  PRODUCTS.forEach(p => {
-    const stock = inventory[p.id] ?? 0;
-    const qty   = quantities[p.id] ?? 0;
-    const sc = stock <= 0 ? 'stock-out' : stock <= 5 ? 'stock-low' : 'stock-ok';
-    const st = stock <= 0 ? '已售完' : stock <= 5 ? `剩餘 ${stock} 份` : '庫存充足';
-    grid.innerHTML += `
+function renderProducts(){
+  const grid=document.getElementById('products-grid');
+  grid.innerHTML='';
+  PRODUCTS.forEach(p=>{
+    const stock=inventory[p.id]??0,qty=quantities[p.id]??0;
+    const sc=stock<=0?'stock-out':stock<=5?'stock-low':'stock-ok';
+    const st=stock<=0?'已售完':stock<=5?`剩餘 ${stock} 份`:'庫存充足';
+    grid.innerHTML+=`
       <div class="product-card ${qty>0?'selected':stock<=0?'out-of-stock':''}" id="card-${p.id}">
-        ${p.img ? `<img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.outerHTML='<div class=product-img-placeholder>${p.icon||'🎁'}</div>'">` : `<div class="product-img-placeholder">${p.icon||'🎁'}</div>`}
+        ${p.img?`<img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.outerHTML='<div class=product-img-placeholder>${p.icon||'🎁'}</div>'">`:`<div class="product-img-placeholder">${p.icon||'🎁'}</div>`}
         <div class="product-info">
           <div class="product-name">${p.name}</div>
           <div class="product-desc">${p.desc}</div>
@@ -315,75 +282,72 @@ function renderProducts() {
   });
 }
 
-function changeQty(id, d) {
-  quantities[id] = Math.max(0, Math.min(inventory[id]??0, (quantities[id]??0)+d));
-  document.getElementById(`qty-${id}`).textContent = quantities[id];
-  document.getElementById(`card-${id}`).className = `product-card ${quantities[id]>0?'selected':inventory[id]<=0?'out-of-stock':''}`;
+function changeQty(id,d){
+  quantities[id]=Math.max(0,Math.min(inventory[id]??0,(quantities[id]??0)+d));
+  document.getElementById(`qty-${id}`).textContent=quantities[id];
+  document.getElementById(`card-${id}`).className=`product-card ${quantities[id]>0?'selected':inventory[id]<=0?'out-of-stock':''}`;
   updateSummary();
 }
 
-function updateSummary() {
-  const items = PRODUCTS.filter(p => quantities[p.id] > 0);
-  const s = document.getElementById('order-summary');
-  if (!items.length) { s.style.display='none'; return; }
-  s.style.display = 'block';
-  let total=0, html='';
-  items.forEach(p => { const sub=p.price*quantities[p.id]; total+=sub; html+=`<div class="summary-row"><span>${p.name} × ${quantities[p.id]}</span><span>NT$ ${sub.toLocaleString()}</span></div>`; });
-  document.getElementById('summary-items').innerHTML = html;
-  document.getElementById('summary-total-price').textContent = `NT$ ${total.toLocaleString()}`;
+function updateSummary(){
+  const items=PRODUCTS.filter(p=>quantities[p.id]>0);
+  const s=document.getElementById('order-summary');
+  if(!items.length){s.style.display='none';return;}
+  s.style.display='block';
+  let total=0,html='';
+  items.forEach(p=>{const sub=p.price*quantities[p.id];total+=sub;html+=`<div class="summary-row"><span>${p.name} × ${quantities[p.id]}</span><span>NT$ ${sub.toLocaleString()}</span></div>`;});
+  document.getElementById('summary-items').innerHTML=html;
+  document.getElementById('summary-total-price').textContent=`NT$ ${total.toLocaleString()}`;
 }
 
-function validateForm() {
-  const fields = [
-    {id:'tour-date', msg:'請填寫預約日期'},
-    {id:'tour-start', msg:'請選擇導覽開始時間'},
-    {id:'pax', msg:'請填寫人數', check:v=>parseInt(v)>=1},
-    {id:'org', msg:'請填寫申請單位'},
-    {id:'contact-name', msg:'請填寫聯絡人姓名'},
-    {id:'contact-phone', msg:'請填寫聯絡人電話'},
+function validateForm(){
+  const fields=[
+    {id:'tour-date',msg:'請填寫預約日期'},
+    {id:'tour-start',msg:'請選擇導覽開始時間'},
+    {id:'pax',msg:'請填寫人數',check:v=>parseInt(v)>=1},
+    {id:'org',msg:'請填寫申請單位'},
+    {id:'contact-name',msg:'請填寫聯絡人姓名'},
+    {id:'contact-phone',msg:'請填寫聯絡人電話'},
   ];
-  let ok = true;
-  fields.forEach(f => {
-    const el = document.getElementById(f.id);
-    const valid = el.value.trim() && (!f.check || f.check(el.value));
-    el.closest('.field').classList.toggle('invalid', !valid);
-    if (!valid) ok = false;
+  let ok=true;
+  fields.forEach(f=>{
+    const el=document.getElementById(f.id);
+    const valid=el.value.trim()&&(!f.check||f.check(el.value));
+    el.closest('.field').classList.toggle('invalid',!valid);
+    if(!valid)ok=false;
   });
-  const allChecked = [...document.querySelectorAll('.must-check')].every(c=>c.checked);
-  document.getElementById('check-error').style.display = allChecked ? 'none' : 'block';
-  return ok && allChecked;
+  const allChecked=[...document.querySelectorAll('.must-check')].every(c=>c.checked);
+  document.getElementById('check-error').style.display=allChecked?'none':'block';
+  return ok&&allChecked;
 }
 
-async function submitForm() {
-  if (!validateForm()) {
-    document.querySelector('.field.invalid')?.scrollIntoView({behavior:'smooth',block:'center'});
-    return;
-  }
+async function submitForm(){
+  if(!validateForm()){document.querySelector('.field.invalid')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
   document.getElementById('loading').classList.add('show');
-  document.getElementById('btn-submit').disabled = true;
-  const payload = {
-    tourDate: document.getElementById('tour-date').value,
-    tourStart: document.getElementById('tour-start').value,
-    tourEnd: document.getElementById('tour-end').value,
-    pax: document.getElementById('pax').value,
-    org: document.getElementById('org').value,
-    contactName: document.getElementById('contact-name').value,
-    contactPhone: document.getElementById('contact-phone').value,
-    leaderName: document.getElementById('leader-name').value,
-    leaderPhone: document.getElementById('leader-phone').value,
-    remarks: document.getElementById('remarks').value,
-    items: PRODUCTS.filter(p=>quantities[p.id]>0).map(p=>({id:p.id,name:p.name,qty:quantities[p.id],price:p.price})),
+  document.getElementById('btn-submit').disabled=true;
+  const payload={
+    tourDate:document.getElementById('tour-date').value,
+    tourStart:document.getElementById('tour-start').value,
+    tourEnd:document.getElementById('tour-end').value,
+    pax:document.getElementById('pax').value,
+    org:document.getElementById('org').value,
+    contactName:document.getElementById('contact-name').value,
+    contactPhone:document.getElementById('contact-phone').value,
+    leaderName:document.getElementById('leader-name').value,
+    leaderPhone:document.getElementById('leader-phone').value,
+    remarks:document.getElementById('remarks').value,
+    items:PRODUCTS.filter(p=>quantities[p.id]>0).map(p=>({id:p.id,name:p.name,qty:quantities[p.id],price:p.price})),
   };
-  try {
-    await fetch(APPS_SCRIPT_URL, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  try{
+    await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     document.getElementById('loading').classList.remove('show');
-    document.getElementById('form-area').style.display = 'none';
-    document.getElementById('success-screen').style.display = 'block';
-    document.getElementById('success-ref').textContent = '申請編號（參考用）：REF-' + Date.now().toString().slice(-6);
+    document.getElementById('form-area').style.display='none';
+    document.getElementById('success-screen').style.display='block';
+    document.getElementById('success-ref').textContent='申請編號（參考用）：REF-'+Date.now().toString().slice(-6);
     window.scrollTo({top:0,behavior:'smooth'});
-  } catch(e) {
+  }catch(e){
     document.getElementById('loading').classList.remove('show');
-    document.getElementById('btn-submit').disabled = false;
+    document.getElementById('btn-submit').disabled=false;
     alert('送出失敗，請檢查網路連線或聯絡館方。');
   }
 }
