@@ -9,7 +9,7 @@
 <style>
   /* ── 全域設定 ── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
   :root {
     --red:    #8B1A1A;
     --red-lt: #C0392B;
@@ -25,14 +25,14 @@
     --ok:     #2D6A4F;
     --ok-lt:  #D8F3DC;
   }
- 
+
   body {
     font-family: 'Noto Sans TC', sans-serif;
     background: var(--cream);
     color: var(--ink);
     min-height: 100vh;
   }
- 
+
   /* ── 頂部橫幅 ── */
   .banner {
     background: var(--red);
@@ -62,10 +62,10 @@
     text-shadow: 0 2px 6px rgba(0,0,0,0.3);
   }
   .banner-desc { font-size: 0.9rem; margin-top: 0.6rem; color: rgba(240,208,128,0.85); letter-spacing: 0.05em; }
- 
+
   /* ── 主體 ── */
   .main { max-width: 780px; margin: 0 auto; padding: 2rem 1rem 4rem; }
- 
+
   /* ── 區塊卡片 ── */
   .section-card {
     background: var(--white);
@@ -92,7 +92,7 @@
   }
   .section-title { font-family: 'Noto Serif TC', serif; font-size: 1rem; font-weight: 700; color: var(--red); }
   .section-body { padding: 1.4rem; }
- 
+
   /* ── 說明區 ── */
   .notice {
     background: #FEF9EE;
@@ -106,11 +106,11 @@
     color: var(--ink-2);
   }
   .notice strong { color: var(--red); }
- 
+
   /* ── 表單欄位 ── */
   .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.4rem; }
   .field-full { grid-column: 1 / -1; }
- 
+
   .field { display: flex; flex-direction: column; gap: 0.35rem; }
   .field label {
     font-size: 0.82rem; font-weight: 500;
@@ -134,7 +134,7 @@
     box-shadow: 0 0 0 3px rgba(139,26,26,0.1);
   }
   .field textarea { resize: vertical; min-height: 80px; }
- 
+
   /* ── 商品卡片 ── */
   .products-grid {
     display: grid;
@@ -153,7 +153,7 @@
     box-shadow: 0 0 0 2px rgba(139,26,26,0.18);
   }
   .product-card.out-of-stock { opacity: 0.55; pointer-events: none; }
- 
+
   .product-img {
     width: 100%; aspect-ratio: 4/3;
     object-fit: cover;
@@ -170,7 +170,7 @@
   .product-name { font-family: 'Noto Serif TC', serif; font-size: 0.95rem; font-weight: 700; color: var(--ink); margin-bottom: 0.25rem; }
   .product-desc { font-size: 0.78rem; color: var(--ink-3); line-height: 1.6; margin-bottom: 0.5rem; }
   .product-price { font-size: 0.88rem; color: var(--red); font-weight: 500; margin-bottom: 0.5rem; }
- 
+
   .stock-badge {
     display: inline-flex; align-items: center; gap: 4px;
     font-size: 0.72rem;
@@ -181,7 +181,7 @@
   .stock-ok { background: var(--ok-lt); color: var(--ok); }
   .stock-low { background: #FFF3CD; color: #856404; }
   .stock-out { background: #F8D7DA; color: #721C24; }
- 
+
   .qty-row {
     display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem;
   }
@@ -204,7 +204,7 @@
     color: var(--ink);
   }
   .qty-label { font-size: 0.75rem; color: var(--ink-3); }
- 
+
   /* ── 勾選同意 ── */
   .checklist { display: flex; flex-direction: column; gap: 0.6rem; }
   .check-item {
@@ -216,7 +216,7 @@
     margin-top: 3px; flex-shrink: 0; accent-color: var(--red);
     width: 15px; height: 15px;
   }
- 
+
   /* ── 小計列 ── */
   .order-summary {
     background: var(--paper);
@@ -228,7 +228,7 @@
   }
   .summary-row { display: flex; justify-content: space-between; padding: 3px 0; color: var(--ink-2); }
   .summary-total { display: flex; justify-content: space-between; padding-top: 8px; margin-top: 6px; border-top: 1px solid var(--border); font-weight: 700; font-size: 0.95rem; color: var(--ink); }
- 
+
   /* ── 送出按鈕 ── */
   .submit-wrap { text-align: center; margin-top: 2rem; }
   .btn-submit {
@@ -247,7 +247,7 @@
   .btn-submit:hover { background: var(--red-lt); }
   .btn-submit:active { transform: scale(0.98); }
   .btn-submit:disabled { background: var(--ink-3); cursor: not-allowed; }
- 
+
   /* ── 成功畫面 ── */
   #success-screen {
     display: none;
@@ -262,12 +262,12 @@
   .success-title { font-family: 'Noto Serif TC', serif; font-size: 1.4rem; font-weight: 700; color: var(--ok); margin-bottom: 0.6rem; }
   .success-desc { font-size: 0.9rem; color: var(--ink-2); line-height: 1.8; }
   .success-ref { font-size: 0.82rem; color: var(--ink-3); margin-top: 0.8rem; }
- 
+
   /* ── 錯誤提示 ── */
   .error-msg { font-size: 0.78rem; color: var(--red); margin-top: 3px; display: none; }
   .field.invalid input, .field.invalid select, .field.invalid textarea { border-color: var(--red); }
   .field.invalid .error-msg { display: block; }
- 
+
   /* ── 載入狀態 ── */
   .loading-overlay {
     display: none;
@@ -295,7 +295,7 @@
     margin: 0 auto 0.8rem;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
- 
+
   @media (max-width: 560px) {
     .field-grid { grid-template-columns: 1fr; }
     .field-full { grid-column: 1; }
@@ -305,12 +305,12 @@
 </style>
 </head>
 <body>
- 
+
 <!-- ══ 設定區（管理員修改這裡）══════════════════════════════════════ -->
 <script>
 // ① 替換成你的 Google Apps Script 網址
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlNH3l652ZKuXgTFeyWHynI8gbPYj2jayFfh5-lm4Eg/exec';
- 
+
 // ② 商品清單（修改名稱、描述、價格、圖片網址、商品ID需與試算表一致）
 const PRODUCTS = [
   {
@@ -364,17 +364,17 @@ const PRODUCTS = [
 ];
 </script>
 <!-- ══════════════════════════════════════════════════════════════════ -->
- 
+
 <!-- 頂部橫幅 -->
 <div class="banner">
   <div class="banner-subtitle">財團法人屏東縣文化基金會</div>
   <div class="banner-title">王船文化館</div>
   <div class="banner-desc">團體導覽預約申請 ／ 伴手禮預訂</div>
 </div>
- 
+
 <!-- 主體 -->
 <div class="main" id="form-area">
- 
+
   <!-- 注意事項 -->
   <div class="notice">
     <strong>申請須知</strong><br>
@@ -384,7 +384,7 @@ const PRODUCTS = [
     四、伴手禮及餐食須於<strong>送出申請時一併預訂</strong>，金額將於現場導覽報到時繳付。<br>
     五、洽詢電話：(08) 833-1680 #413（週一至週五 09:00–17:00）
   </div>
- 
+
   <!-- 導覽預約資料 -->
   <div class="section-card">
     <div class="section-header">
@@ -445,7 +445,7 @@ const PRODUCTS = [
       </div>
     </div>
   </div>
- 
+
   <!-- 伴手禮選購 -->
   <div class="section-card">
     <div class="section-header">
@@ -463,7 +463,7 @@ const PRODUCTS = [
       </div>
     </div>
   </div>
- 
+
   <!-- 重要須知確認 -->
   <div class="section-card">
     <div class="section-header">
@@ -480,12 +480,12 @@ const PRODUCTS = [
       <div id="check-error" style="display:none;color:var(--red);font-size:0.82rem;margin-top:0.6rem;">請勾選所有重要須知後才能送出</div>
     </div>
   </div>
- 
+
   <!-- 送出 -->
   <div class="submit-wrap">
     <button class="btn-submit" id="btn-submit" onclick="submitForm()">送出申請表單</button>
   </div>
- 
+
   <!-- 成功畫面 -->
   <div id="success-screen">
     <div class="success-icon">✅</div>
@@ -494,7 +494,7 @@ const PRODUCTS = [
     <div class="success-ref" id="success-ref"></div>
   </div>
 </div>
- 
+
 <!-- 載入 overlay -->
 <div class="loading-overlay" id="loading">
   <div class="loading-box">
@@ -502,14 +502,14 @@ const PRODUCTS = [
     正在送出申請，請稍候…
   </div>
 </div>
- 
+
 <script>
 // ── 庫存（從 Google Sheets 讀取，初始值先設預設）──
 let inventory = {};
 PRODUCTS.forEach(p => inventory[p.id] = 50);  // 預設50，會被實際庫存覆蓋
 let quantities = {};
 PRODUCTS.forEach(p => quantities[p.id] = 0);
- 
+
 // ── 讀取即時庫存 ──
 async function fetchInventory() {
   if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('YOUR_SCRIPT_ID')) return;
@@ -520,7 +520,7 @@ async function fetchInventory() {
     renderProducts();
   } catch(e) { console.warn('庫存讀取失敗，使用預設值', e); }
 }
- 
+
 // ── 渲染商品卡 ──
 function renderProducts() {
   const grid = document.getElementById('products-grid');
@@ -551,7 +551,7 @@ function renderProducts() {
       </div>`;
   });
 }
- 
+
 // ── 調整數量 ──
 function changeQty(id, delta) {
   const stock = inventory[id] ?? 0;
@@ -561,7 +561,7 @@ function changeQty(id, delta) {
   card.classList.toggle('selected', quantities[id] > 0);
   updateSummary();
 }
- 
+
 // ── 更新小計 ──
 function updateSummary() {
   const summary = document.getElementById('order-summary');
@@ -578,7 +578,7 @@ function updateSummary() {
   document.getElementById('summary-items').innerHTML = html;
   document.getElementById('summary-total-price').textContent = `NT$ ${total.toLocaleString()}`;
 }
- 
+
 // ── 表單驗證 ──
 function validateForm() {
   const required = [
@@ -606,7 +606,7 @@ function validateForm() {
   if (!allChecked) ok = false;
   return ok;
 }
- 
+
 // ── 送出 ──
 async function submitForm() {
   if (!validateForm()) {
@@ -615,11 +615,11 @@ async function submitForm() {
   }
   document.getElementById('loading').classList.add('show');
   document.getElementById('btn-submit').disabled = true;
- 
+
   const items = PRODUCTS
     .filter(p => quantities[p.id] > 0)
     .map(p => ({id: p.id, name: p.name, qty: quantities[p.id], price: p.price}));
- 
+
   const payload = {
     action: 'submit',
     tourDate: document.getElementById('tour-date').value,
@@ -634,7 +634,7 @@ async function submitForm() {
     remarks: document.getElementById('remarks').value,
     items: items,
   };
- 
+
   // 若還未設定 Apps Script URL，進入示範模式
   if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('YOUR_SCRIPT_ID')) {
     await new Promise(r => setTimeout(r, 1200));
@@ -642,7 +642,7 @@ async function submitForm() {
     showSuccess('DEMO-' + Date.now().toString().slice(-6));
     return;
   }
- 
+
   try {
     await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
@@ -658,7 +658,7 @@ async function submitForm() {
     alert('送出失敗，請檢查網路連線或聯絡館方。');
   }
 }
- 
+
 function showSuccess(ref) {
   document.getElementById('form-area').style.display = 'none';
   const s = document.getElementById('success-screen');
@@ -666,11 +666,10 @@ function showSuccess(ref) {
   document.getElementById('success-ref').textContent = '申請編號（參考用）：' + ref;
   window.scrollTo({top: 0, behavior:'smooth'});
 }
- 
+
 // ── 初始化 ──
 renderProducts();
 fetchInventory();
 </script>
 </body>
 </html>
- 
