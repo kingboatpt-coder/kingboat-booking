@@ -343,16 +343,21 @@ async function submitForm(){
     items:PRODUCTS.filter(p=>quantities[p.id]>0).map(p=>({id:p.id,name:p.name,qty:quantities[p.id],price:p.price})),
   };
   try{
-    await fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain'},
+      body: JSON.stringify(payload)
+    });
+    const result = await res.json().catch(()=>({success:true}));
     document.getElementById('loading').classList.remove('show');
     document.getElementById('form-area').style.display='none';
     document.getElementById('success-screen').style.display='block';
-    document.getElementById('success-ref').textContent='申請編號（參考用）：REF-'+Date.now().toString().slice(-6);
+    document.getElementById('success-ref').textContent='申請編號（參考用）：'+(result.ref||'REF-'+Date.now().toString().slice(-6));
     window.scrollTo({top:0,behavior:'smooth'});
   }catch(e){
     document.getElementById('loading').classList.remove('show');
     document.getElementById('btn-submit').disabled=false;
-    alert('送出失敗，請檢查網路連線或聯絡館方。');
+    alert('送出失敗，請檢查網路連線或聯絡館方。錯誤：'+e.message);
   }
 }
 
