@@ -417,6 +417,28 @@ function fmtDate(d){
   return `${dt.getFullYear()}/${String(dt.getMonth()+1).padStart(2,'0')}/${String(dt.getDate()).padStart(2,'0')}`;
 }
 
+function fmtDate(d){
+  if(!d) return '—';
+  if(typeof d==='string'&&/^\d{4}\/\d{2}\/\d{2}$/.test(d)) return d;
+  const dt=new Date(d);
+  if(isNaN(dt.getTime())) return String(d);
+  return `${dt.getFullYear()}/${String(dt.getMonth()+1).padStart(2,'0')}/${String(dt.getDate()).padStart(2,'0')}`;
+}
+function fmtTime(t){
+  if(!t) return '';
+  if(typeof t==='string'&&/^\d{2}:\d{2}$/.test(t)) return t;
+  const dt=new Date(t);
+  if(isNaN(dt.getTime())) return String(t);
+  return `${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`;
+}
+function fmtDT(d){
+  if(!d) return '—';
+  if(typeof d==='string'&&/^\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}$/.test(d)) return d;
+  const dt=new Date(d);
+  if(isNaN(dt.getTime())) return String(d);
+  return fmtDate(d)+' '+fmtTime(d);
+}
+
 async function loadNotifications(){
   document.getElementById('notif-loading').style.display='block';
   document.getElementById('notif-content').style.display='none';
@@ -462,13 +484,15 @@ function renderNotifications(){
 }
 
 function renderNotifCard(b,type){
-  const timeStr=b.tourStart+(b.tourEnd?' — '+b.tourEnd:'');
+  const start=fmtTime(b.tourStart);
+  const end=fmtTime(b.tourEnd);
+  const timeRange=start+(end?' — '+end:'');
   const tag=type==='new'
     ?'<span class="notif-tag tag-new">新預約</span>'
     :'<span class="notif-tag tag-cancel">已取消</span>';
   const actionTime=type==='cancel'&&b.cancelTime
-    ?`🕐 取消時間：${b.cancelTime}`
-    :`🕐 送出時間：${b.submitTime}`;
+    ?`🕐 取消時間：${fmtDT(b.cancelTime)}`
+    :`🕐 送出時間：${fmtDT(b.submitTime)}`;
   const itemsHtml=b.items&&b.items!=='（無）'
     ?`<br>🎁 ${b.items}<br>預訂金額：NT$ ${Number(b.total).toLocaleString()}`:'';
   const leaderHtml=b.leaderName
@@ -479,7 +503,7 @@ function renderNotifCard(b,type){
       <div><span class="notif-ref">${b.ref}</span>${tag}</div>
       ${actionTime}<br>
       🏢 ${b.org}　👥 ${b.pax} 人<br>
-      📅 ${b.tourDate}　${timeStr}<br>
+      📅 ${fmtDate(b.tourDate)}　${timeRange}<br>
       📞 聯絡人：${b.contactName} / ${b.contactPhone}${leaderHtml}${itemsHtml}
     </div>
   </div>`;
