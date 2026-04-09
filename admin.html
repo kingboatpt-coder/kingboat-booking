@@ -3,534 +3,500 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>王船文化館｜團體導覽預約申請</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet">
+<title>王船文化館｜後台管理</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--red:#8B1A1A;--red-lt:#C0392B;--gold:#C9A84C;--gold-lt:#F0D080;--cream:#FAF6EF;--paper:#F3ECD8;--ink:#2C1810;--ink-2:#5C3D2E;--ink-3:#8B6954;--border:#D4B896;--white:#fff;--ok:#2D6A4F;--ok-lt:#D8F3DC}
+:root{--red:#8B1A1A;--red-lt:#C0392B;--gold:#C9A84C;--gold-lt:#F0D080;--paper:#F3ECD8;--cream:#FAF6EF;--ink:#2C1810;--ink-2:#5C3D2E;--ink-3:#8B6954;--border:#D4B896;--white:#fff;--ok:#2D6A4F;--ok-lt:#D8F3DC}
 body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
-.banner{background:var(--red);color:var(--gold-lt);text-align:center;padding:2.5rem 1rem 2rem;position:relative;overflow:hidden}
-.banner::before{content:'';position:absolute;inset:0;background-image:repeating-linear-gradient(90deg,transparent 0,transparent 28px,rgba(201,168,76,.12) 28px,rgba(201,168,76,.12) 29px),repeating-linear-gradient(0deg,transparent 0,transparent 28px,rgba(201,168,76,.12) 28px,rgba(201,168,76,.12) 29px);pointer-events:none}
-.banner-subtitle{font-size:.85rem;letter-spacing:.3em;color:var(--gold);margin-bottom:.4rem}
-.banner-title{font-family:'Noto Serif TC',serif;font-size:2rem;font-weight:700;letter-spacing:.15em;text-shadow:0 2px 6px rgba(0,0,0,.3)}
-.banner-desc{font-size:.9rem;margin-top:.6rem;color:rgba(240,208,128,.85);letter-spacing:.05em}
-.main{max-width:780px;margin:0 auto;padding:2rem 1rem 4rem}
-.section-card{background:var(--white);border:1px solid var(--border);border-radius:8px;margin-bottom:1.8rem;overflow:hidden}
-.section-header{background:var(--paper);border-bottom:1px solid var(--border);padding:.85rem 1.4rem;display:flex;align-items:center;gap:.6rem}
-.section-num{background:var(--red);color:var(--gold-lt);font-family:'Noto Serif TC',serif;font-size:.8rem;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.section-title{font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;color:var(--red)}
-.section-body{padding:1.4rem}
-.notice{background:#FEF9EE;border:1px solid var(--gold);border-left:4px solid var(--gold);border-radius:4px;padding:1rem 1.2rem;margin-bottom:1.8rem;font-size:.85rem;line-height:1.9;color:var(--ink-2)}
-.notice strong{color:var(--red)}
-.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem 1.4rem}
-.field-full{grid-column:1/-1}
-.field{display:flex;flex-direction:column;gap:.35rem}
-.field label{font-size:.82rem;font-weight:500;color:var(--ink-2);display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-.req{color:var(--red)}.opt{font-size:.75rem;color:var(--ink-3);font-weight:400}
-.field input,.field select,.field textarea{border:1px solid var(--border);border-radius:5px;padding:.5rem .7rem;font-family:'Noto Sans TC',sans-serif;font-size:.9rem;color:var(--ink);background:var(--white);transition:border-color .2s;width:100%}
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(139,26,26,.1)}
-.field textarea{resize:vertical;min-height:80px}
-.field-hint{font-size:.76rem;color:#856404;background:#FFF3CD;border-radius:4px;padding:5px 8px;margin-top:2px;line-height:1.5}
-.error-msg{font-size:.78rem;color:var(--red);margin-top:3px;display:none}
-.field.invalid input,.field.invalid select{border-color:var(--red)}
-.field.invalid .error-msg{display:block}
-.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.1rem}
-.product-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--white);transition:box-shadow .2s,border-color .2s;display:flex;flex-direction:column}
-.product-card.selected{border-color:var(--red);box-shadow:0 0 0 2px rgba(139,26,26,.18)}
-.product-card.out-of-stock{opacity:.55;pointer-events:none}
-.product-img-wrap{width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--paper);display:flex;align-items:center;justify-content:center}
-.product-img{width:100%;height:100%;object-fit:contain;display:block;padding:6px}
-.product-img-placeholder{width:100%;aspect-ratio:4/3;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:3rem}
-.product-info{padding:.8rem .9rem .9rem;display:flex;flex-direction:column;flex:1}
-.product-name{font-family:'Noto Serif TC',serif;font-size:.95rem;font-weight:700;color:var(--ink);margin-bottom:.25rem}
-.product-desc{font-size:.78rem;color:var(--ink-3);line-height:1.6;margin-bottom:.5rem;white-space:pre-line}
-.product-price{font-size:.88rem;color:var(--red);font-weight:500;margin-bottom:.5rem}
-.product-bottom{margin-top:auto}
-.stock-badge{display:inline-flex;align-items:center;font-size:.72rem;padding:2px 7px;border-radius:20px;margin-bottom:.6rem}
-.stock-ok{background:var(--ok-lt);color:var(--ok)}.stock-low{background:#FFF3CD;color:#856404}.stock-out{background:#F8D7DA;color:#721C24}
-.qty-row{display:flex;align-items:center;gap:.5rem;margin-top:.4rem}
-.qty-btn{width:28px;height:28px;border:1px solid var(--border);border-radius:4px;background:var(--paper);color:var(--ink);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.qty-btn:hover{background:var(--border)}
-.qty-num{min-width:28px;text-align:center;font-size:.95rem;font-weight:500}
-.qty-label{font-size:.75rem;color:var(--ink-3)}
-.skeleton{border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.skeleton-img{width:100%;aspect-ratio:4/3;background:linear-gradient(90deg,var(--paper) 25%,var(--border) 50%,var(--paper) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
-.skeleton-body{padding:.8rem;display:flex;flex-direction:column;gap:.5rem}
-.skeleton-line{height:12px;border-radius:4px;background:linear-gradient(90deg,var(--paper) 25%,var(--border) 50%,var(--paper) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
-.skeleton-line.short{width:55%}
-@keyframes shimmer{to{background-position:-200% 0}}
-.order-summary{background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:.9rem 1.1rem;margin-top:1.4rem;font-size:.88rem}
-.summary-row{display:flex;justify-content:space-between;padding:3px 0;color:var(--ink-2)}
-.summary-total{display:flex;justify-content:space-between;padding-top:8px;margin-top:6px;border-top:1px solid var(--border);font-weight:700;font-size:.95rem}
-.checklist{display:flex;flex-direction:column;gap:.8rem}
-.check-item{display:flex;gap:.7rem;align-items:flex-start;font-size:.85rem;line-height:1.65;color:var(--ink-2);cursor:pointer}
-.check-item input[type="checkbox"]{margin-top:3px;flex-shrink:0;accent-color:var(--red);width:15px;height:15px}
-.submit-wrap{text-align:center;margin-top:2rem}
-.btn-submit{background:var(--red);color:var(--gold-lt);font-family:'Noto Serif TC',serif;font-size:1rem;font-weight:700;letter-spacing:.15em;padding:.85rem 3rem;border:none;border-radius:6px;cursor:pointer;transition:background .2s}
-.btn-submit:hover{background:var(--red-lt)}
-.btn-submit:disabled{background:var(--ink-3);cursor:not-allowed}
-#success-screen{display:none;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:3rem 2rem;text-align:center;margin-top:2rem}
-.success-icon{font-size:3rem;margin-bottom:1rem}
-.success-title{font-family:'Noto Serif TC',serif;font-size:1.4rem;font-weight:700;color:var(--ok);margin-bottom:.6rem}
-.success-desc{font-size:.9rem;color:var(--ink-2);line-height:1.8}
-.success-ref{font-size:.82rem;color:var(--ink-3);margin-top:.8rem}
-.loading-overlay{display:none;position:fixed;inset:0;background:rgba(44,24,16,.45);z-index:999;align-items:center;justify-content:center}
-.loading-overlay.show{display:flex}
-.loading-box{background:var(--white);border-radius:8px;padding:1.5rem 2rem;text-align:center;font-family:'Noto Serif TC',serif;color:var(--red)}
-.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto .8rem}
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem}
+.login-box{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:2.5rem 2rem;width:100%;max-width:360px;text-align:center}
+.login-icon{font-size:2.5rem;margin-bottom:.8rem}
+.login-title{font-family:'Noto Serif TC',serif;font-size:1.2rem;color:var(--red);margin-bottom:1.5rem}
+.login-box input{width:100%;border:1px solid var(--border);border-radius:5px;padding:.6rem .8rem;font-size:.95rem;font-family:'Noto Sans TC',sans-serif;margin-bottom:.8rem}
+.login-box input:focus{outline:none;border-color:var(--red)}
+.btn{padding:.6rem 1.5rem;border:none;border-radius:5px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;font-size:.9rem;font-weight:500;transition:background .2s}
+.btn-primary{background:var(--red);color:var(--gold-lt)}
+.btn-primary:hover{background:var(--red-lt)}
+.btn-full{width:100%}
+.btn-sm{padding:.35rem .9rem;font-size:.82rem}
+.btn-danger{background:#dc3545;color:#fff}
+.btn-danger:hover{background:#b02a37}
+.btn-secondary{background:var(--paper);color:var(--ink-2);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--border)}
+.login-err{color:var(--red);font-size:.82rem;margin-top:.5rem;display:none}
+#admin-screen{display:none}
+.topbar{background:var(--red);color:var(--gold-lt);padding:.7rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.topbar-title{font-family:'Noto Serif TC',serif;font-size:1rem;letter-spacing:.08em}
+.topbar-right{font-size:.8rem;color:var(--gold);cursor:pointer}
+.tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--border)}
+.tab{padding:.75rem 1.4rem;cursor:pointer;font-size:.9rem;color:var(--ink-2);border-bottom:3px solid transparent;transition:all .2s}
+.tab.active{color:var(--red);border-bottom-color:var(--red);font-weight:500}
+.tab:hover:not(.active){background:rgba(0,0,0,.04)}
+.panel{display:none;padding:1.5rem;max-width:900px;margin:0 auto}
+.panel.active{display:block}
+.product-list{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.5rem}
+.product-row{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:.9rem 1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.product-thumb{width:56px;height:56px;border-radius:5px;flex-shrink:0;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:1.6rem;overflow:hidden}
+.product-thumb img{width:100%;height:100%;object-fit:cover}
+.product-meta{flex:1;min-width:120px}
+.product-meta-name{font-weight:500;font-size:.95rem;margin-bottom:2px}
+.product-meta-sub{font-size:.78rem;color:var(--ink-3)}
+.product-stock{font-size:.82rem;color:var(--ok);background:var(--ok-lt);padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.product-actions{display:flex;gap:.5rem;flex-shrink:0}
+.form-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.4rem;margin-bottom:1rem}
+.form-card h3{font-family:'Noto Serif TC',serif;font-size:.95rem;color:var(--red);margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem 1.2rem}
+.form-full{grid-column:1/-1}
+.form-field{display:flex;flex-direction:column;gap:.3rem}
+.form-field label{font-size:.78rem;font-weight:500;color:var(--ink-2)}
+.form-field input,.form-field textarea{border:1px solid var(--border);border-radius:5px;padding:.45rem .65rem;font-size:.88rem;font-family:'Noto Sans TC',sans-serif;color:var(--ink);width:100%}
+.form-field input:focus,.form-field textarea:focus{outline:none;border-color:var(--red)}
+.form-field textarea{resize:vertical;min-height:70px}
+.form-actions{display:flex;gap:.6rem;margin-top:1rem;justify-content:flex-end}
+.settings-section{margin-bottom:1.5rem}
+.settings-section h3{font-family:'Noto Serif TC',serif;font-size:.95rem;color:var(--red);margin-bottom:.8rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+.settings-field{display:flex;flex-direction:column;gap:.3rem;margin-bottom:.8rem}
+.settings-field label{font-size:.78rem;font-weight:500;color:var(--ink-2)}
+.settings-field input,.settings-field textarea{border:1px solid var(--border);border-radius:5px;padding:.45rem .65rem;font-size:.88rem;font-family:'Noto Sans TC',sans-serif;color:var(--ink);width:100%}
+.settings-field input:focus,.settings-field textarea:focus{outline:none;border-color:var(--red)}
+.settings-field textarea{resize:vertical;min-height:75px}
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:.7rem 1.2rem;border-radius:6px;font-size:.88rem;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}.toast.ok{background:var(--ok);color:#fff}.toast.err{background:#dc3545;color:#fff}
+.spinner-sm{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
-@media(max-width:560px){.field-grid{grid-template-columns:1fr}.field-full{grid-column:1}.products-grid{grid-template-columns:1fr 1fr}.banner-title{font-size:1.5rem}}
-.query-toggle{text-align:center;margin-bottom:1.4rem}
-.query-toggle a{color:var(--red);font-size:.9rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px;letter-spacing:.03em}
-.query-panel{display:none;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:1.4rem;margin-bottom:1.8rem}
-.query-panel.open{display:block}
-.query-panel h3{font-family:'Noto Serif TC',serif;font-size:1rem;color:var(--red);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-.query-input-row{display:flex;gap:.8rem;align-items:flex-end;flex-wrap:wrap;margin-bottom:1rem}
-.query-input-row .field{flex:1;min-width:180px}
-.query-input-row .btn-query{height:38px;padding:0 1.4rem;background:var(--red);color:var(--gold-lt);border:none;border-radius:5px;font-family:'Noto Sans TC',sans-serif;font-size:.88rem;cursor:pointer;white-space:nowrap}
-.query-input-row .btn-query:hover{background:var(--red-lt)}
-.query-input-row .btn-query:disabled{background:var(--ink-3);cursor:not-allowed}
-.query-result{margin-top:.5rem}
-.query-empty{color:var(--ink-3);font-size:.88rem;padding:.5rem 0}
-.booking-card{border:1px solid var(--border);border-radius:6px;padding:1rem;margin-bottom:.8rem;background:var(--cream)}
-.booking-card.cancelled{opacity:.5;text-decoration:line-through}
-.booking-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;flex-wrap:wrap;gap:.4rem}
-.booking-ref{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--red);font-size:.92rem}
-.booking-date{font-size:.85rem;color:var(--ink-2)}
-.booking-detail{font-size:.83rem;color:var(--ink-2);line-height:1.7}
-.booking-actions{margin-top:.8rem}
-.btn-cancel-booking{background:transparent;border:1px solid #dc3545;color:#dc3545;padding:.3rem .9rem;border-radius:4px;font-size:.82rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif}
-.btn-cancel-booking:hover{background:#dc3545;color:#fff}
-.btn-cancel{background:transparent;border:1px solid #dc3545;color:#dc3545;padding:.3rem .9rem;border-radius:4px;font-size:.82rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif}
-.btn-cancel:hover{background:#dc3545;color:#fff}
-.cancel-form{margin-top:.6rem;padding:.8rem;background:#FEF9EE;border:1px solid var(--gold);border-radius:5px;display:none}
-.cancel-form.open{display:block}
-.cancel-verify{margin-top:.6rem;padding:.8rem;background:#FEF9EE;border:1px solid var(--gold);border-radius:5px;display:none}
-.cancel-verify.open{display:block}
-.cancel-verify .field{margin-bottom:.5rem}
-.cancel-verify .field input{width:100%;border:1px solid var(--border);border-radius:4px;padding:.4rem .6rem;font-size:.85rem;font-family:'Noto Sans TC',sans-serif}
-.cancel-verify .field input:focus{outline:none;border-color:var(--red)}
-.cancel-btns{display:flex;gap:.5rem;margin-top:.6rem}
-.booking-status{font-size:.78rem;padding:2px 8px;border-radius:20px;display:inline-block}
-.status-active{background:var(--ok-lt);color:var(--ok)}
-.status-cancelled{background:#F8D7DA;color:#721C24}
+.notif-section{margin-bottom:2rem}
+.notif-section h3{font-family:'Noto Serif TC',serif;font-size:.95rem;color:var(--red);margin-bottom:.8rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+.notif-section h3 .badge{background:var(--red);color:var(--gold-lt);font-size:.72rem;padding:1px 7px;border-radius:10px;font-family:'Noto Sans TC',sans-serif}
+.notif-card{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:.9rem 1rem;margin-bottom:.7rem;display:flex;align-items:flex-start;gap:.8rem}
+.notif-card.type-cancel{border-left:3px solid #dc3545}
+.notif-card.type-new{border-left:3px solid var(--ok)}
+.notif-check{margin-top:3px;flex-shrink:0;accent-color:var(--red);width:17px;height:17px;cursor:pointer}
+.notif-body{flex:1;font-size:.85rem;color:var(--ink-2);line-height:1.7}
+.notif-ref{font-family:'Noto Serif TC',serif;font-weight:700;color:var(--ink);font-size:.88rem}
+.notif-tag{display:inline-block;font-size:.72rem;padding:1px 7px;border-radius:10px;margin-left:.4rem;vertical-align:middle}
+.tag-new{background:var(--ok-lt);color:var(--ok)}
+.tag-cancel{background:#F8D7DA;color:#721C24}
+.notif-empty{color:var(--ink-3);font-size:.88rem;padding:1rem 0;text-align:center}
+.notif-actions{display:flex;justify-content:flex-end;gap:.6rem;margin-top:.5rem}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr}.form-full{grid-column:1}}
 </style>
 </head>
 <body>
+
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlNH3l652ZKuXgTFeyWHynI8gbPYj2jayFfh5-lm4Eg/exec';
+const API='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlNH3l652ZKuXgTFeyWHynI8gbPYj2jayFfh5-lm4Eg/exec';
 </script>
 
-<div class="banner">
-  <div class="banner-subtitle" id="s-banner_subtitle">&nbsp;</div>
-  <div class="banner-title" id="s-banner_title">&nbsp;</div>
-  <div class="banner-desc" id="s-banner_desc">&nbsp;</div>
-</div>
-
-<div class="main" id="form-area" style="opacity:0;transition:opacity .4s">
-
-  <!-- 查詢預約紀錄 -->
-  <div class="query-toggle"><a onclick="toggleQuery()">🔍 查詢／取消預約紀錄</a></div>
-  <div class="query-panel" id="query-panel">
-    <h3>📋 查詢預約紀錄</h3>
-    <div class="query-input-row">
-      <div class="field">
-        <label>申請單位</label>
-        <input type="text" id="query-org" placeholder="請輸入您填表時的申請單位名稱">
-      </div>
-      <button class="btn-query" id="btn-query" onclick="doQuery()">查詢</button>
-    </div>
-    <div class="query-result" id="query-result"></div>
-  </div>
-
-  <div class="notice" id="s-notice">
-    <div style="text-align:center;color:var(--ink-3);padding:.5rem 0">載入中…</div>
-  </div>
-
-  <div class="section-card">
-    <div class="section-header"><div class="section-num">一</div><div class="section-title">導覽預約資料</div></div>
-    <div class="section-body">
-      <div class="field-grid">
-        <div class="field">
-          <label>預約日期 <span class="req">*</span></label>
-          <input type="date" id="tour-date">
-          <span class="error-msg">請填寫預約日期</span>
-        </div>
-        <div class="field">
-          <label>導覽開始時間 <span class="req">*</span></label>
-          <select id="tour-start"><option value="">請選擇時間</option></select>
-          <span class="error-msg">請選擇導覽開始時間</span>
-        </div>
-        <div class="field">
-          <label>預計離館時間 <span class="opt">（選填）</span></label>
-          <select id="tour-end"><option value="">請選擇時間</option></select>
-        </div>
-        <div class="field">
-          <label>預計人數 <span class="req">*</span></label>
-          <input type="number" id="pax" min="1" placeholder="請輸入人數">
-          <div class="field-hint" id="s-pax_hint">&nbsp;</div>
-          <span class="error-msg">請填寫人數</span>
-        </div>
-        <div class="field field-full">
-          <label>申請單位 <span class="req">*</span></label>
-          <input type="text" id="org" placeholder="學校 / 機關 / 企業名稱">
-          <span class="error-msg">請填寫申請單位</span>
-        </div>
-        <div class="field">
-          <label>聯絡人姓名 <span class="req">*</span></label>
-          <input type="text" id="contact-name">
-          <span class="error-msg">請填寫聯絡人姓名</span>
-        </div>
-        <div class="field">
-          <label>聯絡人電話 <span class="req">*</span></label>
-          <input type="tel" id="contact-phone" placeholder="09xx-xxxxxx 或市話">
-          <span class="error-msg">請填寫聯絡人電話</span>
-        </div>
-        <div class="field">
-          <label>領團人姓名 <span class="opt">（選填）</span></label>
-          <input type="text" id="leader-name">
-        </div>
-        <div class="field">
-          <label>領團人電話 <span class="opt">（選填）</span></label>
-          <input type="tel" id="leader-phone">
-        </div>
-        <div class="field field-full">
-          <label>其他需求</label>
-          <textarea id="remarks" placeholder="如有特殊需求、無障礙需求或其他事項，請在此說明"></textarea>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-card">
-    <div class="section-header"><div class="section-num">二</div><div class="section-title">伴手禮 ／ 餐食預訂（選填）</div></div>
-    <div class="section-body">
-      <p style="font-size:.83rem;color:var(--ink-3);margin-bottom:1.1rem;">可為每位團員預先選購，金額將於現場統一收取，庫存即時顯示，超售前系統自動限制數量。</p>
-      <div class="products-grid" id="products-grid">
-        <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-        <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-        <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-      </div>
-      <div class="order-summary" id="order-summary" style="display:none">
-        <div id="summary-items"></div>
-        <div class="summary-total"><span>合計金額（供參考，現場付款）</span><span id="summary-total-price">NT$0</span></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-card">
-    <div class="section-header"><div class="section-num">三</div><div class="section-title">重要須知確認 <span style="font-size:.8rem;color:var(--ink-3);">（請逐項閱讀並勾選）</span></div></div>
-    <div class="section-body">
-      <div class="checklist">
-        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check1"></span></label>
-        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check2"></span></label>
-        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check3"></span></label>
-        <label class="check-item"><input type="checkbox" class="must-check"><span id="s-check4"></span></label>
-      </div>
-      <div id="check-error" style="display:none;color:var(--red);font-size:.82rem;margin-top:.6rem;">請勾選所有重要須知後才能送出</div>
-    </div>
-  </div>
-
-  <div class="submit-wrap">
-    <button class="btn-submit" id="btn-submit" onclick="submitForm()">送出申請表單</button>
-  </div>
-
-</div><!-- end form-area -->
-
-<div class="main">
-  <div id="success-screen">
-    <div class="success-icon">✅</div>
-    <div class="success-title">申請表單已成功送出</div>
-    <div class="success-desc" id="s-success_desc"></div>
-    <div class="success-ref" id="success-ref"></div>
+<!-- 登入 -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-icon">⚙️</div>
+    <div class="login-title">王船文化館 後台管理</div>
+    <input type="password" id="pw-input" placeholder="請輸入管理密碼" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()">登入</button>
+    <div class="login-err" id="login-err">密碼錯誤，請重試</div>
   </div>
 </div>
 
-<div class="loading-overlay" id="loading">
-  <div class="loading-box"><div class="spinner"></div>正在送出申請，請稍候…</div>
+<!-- 後台 -->
+<div id="admin-screen">
+  <div class="topbar">
+    <div class="topbar-title">⚙️ 王船文化館 後台管理</div>
+    <div class="topbar-right" onclick="logout()">登出</div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('notifications')">預約通知</div>
+    <div class="tab" onclick="switchTab('products')">商品管理</div>
+    <div class="tab" onclick="switchTab('settings')">頁面文字</div>
+  </div>
+
+  <!-- 預約通知 -->
+  <div class="panel active" id="panel-notifications">
+    <div id="notif-loading" style="color:var(--ink-3);font-size:.9rem;padding:1rem 0">載入通知中…</div>
+    <div id="notif-content" style="display:none">
+      <div class="notif-section" id="notif-new-section">
+        <h3>📥 新預約 <span class="badge" id="notif-new-count">0</span></h3>
+        <div id="notif-new-list"></div>
+        <div class="notif-actions" id="notif-new-actions" style="display:none">
+          <button class="btn btn-primary btn-sm" id="btn-confirm-new" onclick="confirmChecked('new')">儲存已勾選</button>
+        </div>
+      </div>
+      <div class="notif-section" id="notif-cancel-section">
+        <h3>📤 取消預約 <span class="badge" id="notif-cancel-count">0</span></h3>
+        <div id="notif-cancel-list"></div>
+        <div class="notif-actions" id="notif-cancel-actions" style="display:none">
+          <button class="btn btn-primary btn-sm" id="btn-confirm-cancel" onclick="confirmChecked('cancel')">儲存已勾選</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 商品管理 -->
+  <div class="panel" id="panel-products">
+    <div style="margin-bottom:1rem">
+      <button class="btn btn-primary btn-sm" onclick="openAddProduct()">＋ 新增商品</button>
+    </div>
+    <div id="products-loading" style="color:var(--ink-3);font-size:.9rem;padding:1rem 0">載入商品中…</div>
+    <div class="product-list" id="product-list"></div>
+    <div class="form-card" id="product-form" style="display:none">
+      <h3 id="product-form-title">新增商品</h3>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>商品ID（英數字，例如 P007）</label>
+          <input type="text" id="f-id" placeholder="P007">
+        </div>
+        <div class="form-field">
+          <label>商品名稱</label>
+          <input type="text" id="f-name" placeholder="例：東港黑鮪魚醬">
+        </div>
+        <div class="form-field">
+          <label>價格（NT$）</label>
+          <input type="number" id="f-price" placeholder="280">
+        </div>
+        <div class="form-field">
+          <label>庫存數量</label>
+          <input type="number" id="f-stock" placeholder="50">
+        </div>
+        <div class="form-field form-full">
+          <label>商品描述</label>
+          <textarea id="f-desc" placeholder="商品介紹文字…"></textarea>
+        </div>
+        <div class="form-field form-full">
+          <label>圖片網址（留空使用備用圖示）</label>
+          <input type="url" id="f-img" placeholder="https://...">
+        </div>
+        <div class="form-field">
+          <label>備用圖示 Emoji（無圖片時顯示）</label>
+          <input type="text" id="f-icon" placeholder="🎁">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary btn-sm" onclick="closeProductForm()">取消</button>
+        <button class="btn btn-primary btn-sm" id="save-product-btn" onclick="saveProduct()">儲存商品</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 頁面文字 -->
+  <div class="panel" id="panel-settings">
+    <div id="settings-loading" style="color:var(--ink-3);font-size:.9rem;padding:1rem 0">載入設定中…</div>
+    <div id="settings-content" style="display:none">
+      <div class="settings-section">
+        <h3>頂部橫幅</h3>
+        <div class="settings-field"><label>小標題（機構名稱）</label><input type="text" id="s-banner_subtitle"></div>
+        <div class="settings-field"><label>大標題（館名）</label><input type="text" id="s-banner_title"></div>
+        <div class="settings-field"><label>副標題</label><input type="text" id="s-banner_desc"></div>
+      </div>
+      <div class="settings-section">
+        <h3>申請須知</h3>
+        <div class="settings-field"><label>每一條用換行分隔</label><textarea id="s-notice" style="min-height:150px"></textarea></div>
+      </div>
+      <div class="settings-section">
+        <h3>人數欄位提示文字</h3>
+        <div class="settings-field"><textarea id="s-pax_hint" style="min-height:60px"></textarea></div>
+      </div>
+      <div class="settings-section">
+        <h3>重要須知確認項目</h3>
+        <div class="settings-field"><label>第1條</label><textarea id="s-check1" style="min-height:55px"></textarea></div>
+        <div class="settings-field"><label>第2條</label><textarea id="s-check2" style="min-height:55px"></textarea></div>
+        <div class="settings-field"><label>第3條</label><textarea id="s-check3" style="min-height:55px"></textarea></div>
+        <div class="settings-field"><label>第4條</label><textarea id="s-check4" style="min-height:55px"></textarea></div>
+      </div>
+      <div class="settings-section">
+        <h3>送出成功後的訊息</h3>
+        <div class="settings-field"><textarea id="s-success_desc" style="min-height:80px"></textarea></div>
+      </div>
+      <div style="text-align:right;margin-top:.5rem">
+        <button class="btn btn-primary" id="save-settings-btn" onclick="saveSettings()">儲存所有設定</button>
+      </div>
+    </div>
+  </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-// 時間選單
-function buildTime(id,minH,minM,maxH,maxM){
-  const sel=document.getElementById(id);
-  for(let h=minH;h<=maxH;h++){for(let m=0;m<=45;m+=15){
-    if(h===minH&&m<minM)continue;if(h===maxH&&m>maxM)continue;
-    const v=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-    sel.innerHTML+=`<option value="${v}">${v}</option>`;
-  }}
-}
-buildTime('tour-start',9,0,15,45);
-buildTime('tour-end',9,0,18,0);
+let adminPw='';
+let products=[];
+let editingId=null;
 
-let PRODUCTS=[],inventory={},quantities={};
+// ── 登入（直接用密碼比對，不走 API，避免 CORS 問題）──
+// 密碼必須與 Apps Script 中的 ADMIN_PASSWORD 一致
+const LOCAL_PASSWORD_HASH = '781223'; // 直接填你的密碼
 
-// 套用後台設定到頁面
-function applySettings(s){
-  const set=(id,val)=>{const el=document.getElementById('s-'+id);if(el&&val!==undefined&&val!==null)el.textContent=val;};
-  set('banner_subtitle',s.banner_subtitle);
-  set('banner_title',   s.banner_title);
-  set('banner_desc',    s.banner_desc);
-  set('pax_hint',       s.pax_hint);
-  set('check1',         s.check1);
-  set('check2',         s.check2);
-  set('check3',         s.check3);
-  set('check4',         s.check4);
-  if(s.success_desc){
-    const el=document.getElementById('s-success_desc');
-    if(el) el.innerHTML=s.success_desc.replace(/\n/g,'<br>');
-  }
-  if(s.notice){
-    const el=document.getElementById('s-notice');
-    if(el) el.innerHTML=s.notice.replace(/\n/g,'<br>');
+function doLogin(){
+  const pw=document.getElementById('pw-input').value.trim();
+  if(pw===LOCAL_PASSWORD_HASH){
+    adminPw=pw;
+    document.getElementById('login-err').style.display='none';
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('admin-screen').style.display='block';
+    loadNotifications();
+  } else {
+    document.getElementById('login-err').style.display='block';
   }
 }
 
-async function fetchAll(){
+function logout(){
+  adminPw='';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('admin-screen').style.display='none';
+  document.getElementById('pw-input').value='';
+}
+
+// ── 分頁 ──
+const TAB_ORDER=['notifications','products','settings'];
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',TAB_ORDER[i]===tab));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  if(tab==='notifications') loadNotifications();
+  if(tab==='settings') loadSettings();
+  if(tab==='products') loadProducts();
+}
+
+// ── 商品 ──
+async function loadProducts(){
+  document.getElementById('products-loading').style.display='block';
+  document.getElementById('product-list').innerHTML='';
   try{
-    const[pr,sr]=await Promise.all([
-      fetch(APPS_SCRIPT_URL+'?action=products').then(r=>r.json()),
-      fetch(APPS_SCRIPT_URL+'?action=settings').then(r=>r.json()),
-    ]);
-    if(sr.settings) applySettings(sr.settings);
-    document.getElementById('form-area').style.opacity='1';
-    if(pr.products&&pr.products.length){
-      PRODUCTS=pr.products;
-      PRODUCTS.forEach(p=>{inventory[p.id]=p.stock;quantities[p.id]=0;});
-      renderProducts();
-    } else {
-      document.getElementById('products-grid').innerHTML='<p style="color:var(--ink-3);font-size:.85rem;">目前無商品資料。</p>';
-    }
+    const res=await fetch(API+'?action=products');
+    const data=await res.json();
+    products=data.products||[];
+    document.getElementById('products-loading').style.display='none';
+    renderProductList();
   }catch(e){
-    document.getElementById('form-area').style.opacity='1';
-    document.getElementById('products-grid').innerHTML='<p style="color:var(--ink-3);font-size:.85rem;">商品資料載入失敗，請重新整理頁面。</p>';
+    document.getElementById('products-loading').textContent='載入失敗，請重新整理。';
   }
 }
 
-function renderProducts(){
-  const grid=document.getElementById('products-grid');
-  grid.innerHTML='';
-  PRODUCTS.forEach(p=>{
-    const stock=inventory[p.id]??0,qty=quantities[p.id]??0;
-    const sc=stock<=0?'stock-out':stock<=5?'stock-low':'stock-ok';
-    const st=stock<=0?'已售完':stock<=5?`剩餘 ${stock} 份`:'庫存充足';
-    grid.innerHTML+=`
-      <div class="product-card ${qty>0?'selected':stock<=0?'out-of-stock':''}" id="card-${p.id}">
-        ${p.img?`<div class="product-img-wrap"><img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.closest('.product-img-wrap').outerHTML='<div class=product-img-placeholder>${p.icon||'🎁'}</div>'"></div>`:`<div class="product-img-placeholder">${p.icon||'🎁'}</div>`}
-        <div class="product-info">
-          <div class="product-name">${p.name}</div>
-          <div class="product-desc">${(p.desc||'').replace(/\n/g,'<br>')}</div>
-          <div class="product-bottom">
-            <div class="product-price">NT$ ${Number(p.price).toLocaleString()} ／份</div>
-            <span class="stock-badge ${sc}">${st}</span>
-            <div class="qty-row">
-              <button class="qty-btn" onclick="changeQty('${p.id}',-1)">－</button>
-              <div class="qty-num" id="qty-${p.id}">${qty}</div>
-              <button class="qty-btn" onclick="changeQty('${p.id}',1)">＋</button>
-              <span class="qty-label">份</span>
-            </div>
-          </div>
+function renderProductList(){
+  const list=document.getElementById('product-list');
+  if(!products.length){list.innerHTML='<p style="color:var(--ink-3);font-size:.88rem;">尚無商品，請點「新增商品」。</p>';return;}
+  list.innerHTML='';
+  products.forEach(p=>{
+    const thumb=p.img
+      ?`<div class="product-thumb"><img src="${p.img}" onerror="this.outerHTML='<span>${p.icon||'🎁'}</span>'"></div>`
+      :`<div class="product-thumb">${p.icon||'🎁'}</div>`;
+    list.innerHTML+=`
+      <div class="product-row">
+        ${thumb}
+        <div class="product-meta">
+          <div class="product-meta-name">${p.name}</div>
+          <div class="product-meta-sub">ID: ${p.id} ｜ NT$${Number(p.price).toLocaleString()} ／份</div>
+        </div>
+        <span class="product-stock">庫存 ${p.stock}</span>
+        <div class="product-actions">
+          <button class="btn btn-secondary btn-sm" onclick="openEditProduct('${p.id}')">編輯</button>
+          <button class="btn btn-danger btn-sm" onclick="confirmDelete('${p.id}','${p.name.replace(/'/g,'')}')">刪除</button>
         </div>
       </div>`;
   });
 }
 
-function changeQty(id,d){
-  quantities[id]=Math.max(0,Math.min(inventory[id]??0,(quantities[id]??0)+d));
-  document.getElementById(`qty-${id}`).textContent=quantities[id];
-  document.getElementById(`card-${id}`).className=`product-card ${quantities[id]>0?'selected':inventory[id]<=0?'out-of-stock':''}`;
-  updateSummary();
+function openAddProduct(){
+  editingId=null;
+  document.getElementById('product-form-title').textContent='新增商品';
+  ['id','name','price','stock','desc','img','icon'].forEach(k=>document.getElementById('f-'+k).value='');
+  document.getElementById('f-id').disabled=false;
+  document.getElementById('product-form').style.display='block';
+  document.getElementById('product-form').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function updateSummary(){
-  const items=PRODUCTS.filter(p=>quantities[p.id]>0);
-  const s=document.getElementById('order-summary');
-  if(!items.length){s.style.display='none';return;}
-  s.style.display='block';
-  let total=0,html='';
-  items.forEach(p=>{const sub=p.price*quantities[p.id];total+=sub;html+=`<div class="summary-row"><span>${p.name} × ${quantities[p.id]}</span><span>NT$ ${sub.toLocaleString()}</span></div>`;});
-  document.getElementById('summary-items').innerHTML=html;
-  document.getElementById('summary-total-price').textContent=`NT$ ${total.toLocaleString()}`;
+function openEditProduct(id){
+  const p=products.find(x=>x.id===id);if(!p)return;
+  editingId=id;
+  document.getElementById('product-form-title').textContent='編輯商品';
+  document.getElementById('f-id').value=p.id;document.getElementById('f-id').disabled=true;
+  document.getElementById('f-name').value=p.name;document.getElementById('f-price').value=p.price;
+  document.getElementById('f-stock').value=p.stock;document.getElementById('f-desc').value=p.desc;
+  document.getElementById('f-img').value=p.img;document.getElementById('f-icon').value=p.icon;
+  document.getElementById('product-form').style.display='block';
+  document.getElementById('product-form').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function validateForm(){
-  const fields=[
-    {id:'tour-date',msg:'請填寫預約日期'},
-    {id:'tour-start',msg:'請選擇導覽開始時間'},
-    {id:'pax',msg:'請填寫人數',check:v=>parseInt(v)>=1},
-    {id:'org',msg:'請填寫申請單位'},
-    {id:'contact-name',msg:'請填寫聯絡人姓名'},
-    {id:'contact-phone',msg:'請填寫聯絡人電話'},
-  ];
-  let ok=true;
-  fields.forEach(f=>{
-    const el=document.getElementById(f.id);
-    const valid=el.value.trim()&&(!f.check||f.check(el.value));
-    el.closest('.field').classList.toggle('invalid',!valid);
-    if(!valid)ok=false;
-  });
-  const allChecked=[...document.querySelectorAll('.must-check')].every(c=>c.checked);
-  document.getElementById('check-error').style.display=allChecked?'none':'block';
-  return ok&&allChecked;
+function closeProductForm(){document.getElementById('product-form').style.display='none';}
+
+async function saveProduct(){
+  const id=editingId||document.getElementById('f-id').value.trim();
+  if(!id||!document.getElementById('f-name').value.trim()){showToast('請填寫商品ID和名稱','err');return;}
+  const btn=document.getElementById('save-product-btn');
+  btn.innerHTML='<span class="spinner-sm"></span>儲存中…';btn.disabled=true;
+  const res=await apiPost({action:'saveProduct',password:adminPw,id,
+    name:document.getElementById('f-name').value,price:document.getElementById('f-price').value,
+    stock:document.getElementById('f-stock').value,desc:document.getElementById('f-desc').value,
+    img:document.getElementById('f-img').value,icon:document.getElementById('f-icon').value||'🎁'});
+  btn.innerHTML='儲存商品';btn.disabled=false;
+  if(res&&res.success){showToast('商品已儲存','ok');closeProductForm();loadProducts();}
+  else showToast('儲存失敗，請重試','err');
 }
 
-async function submitForm(){
-  if(!validateForm()){document.querySelector('.field.invalid')?.scrollIntoView({behavior:'smooth',block:'center'});return;}
-  document.getElementById('loading').classList.add('show');
-  document.getElementById('btn-submit').disabled=true;
-  const payload={
-    tourDate:document.getElementById('tour-date').value,
-    tourStart:document.getElementById('tour-start').value,
-    tourEnd:document.getElementById('tour-end').value,
-    pax:document.getElementById('pax').value,
-    org:document.getElementById('org').value,
-    contactName:document.getElementById('contact-name').value,
-    contactPhone:document.getElementById('contact-phone').value,
-    leaderName:document.getElementById('leader-name').value,
-    leaderPhone:document.getElementById('leader-phone').value,
-    remarks:document.getElementById('remarks').value,
-    items:PRODUCTS.filter(p=>quantities[p.id]>0).map(p=>({id:p.id,name:p.name,qty:quantities[p.id],price:p.price})),
-  };
+async function confirmDelete(id,name){
+  if(!confirm(`確定要刪除「${name}」嗎？`))return;
+  const res=await apiPost({action:'deleteProduct',password:adminPw,id});
+  if(res&&res.success){showToast('已刪除','ok');loadProducts();}
+  else showToast('刪除失敗','err');
+}
+
+// ── 設定 ──
+async function loadSettings(){
+  document.getElementById('settings-loading').style.display='block';
+  document.getElementById('settings-content').style.display='none';
   try{
-    const postBody = JSON.stringify({ action: 'submit', ...payload });
-    let result;
+    const res=await fetch(API+'?action=settings');
+    const data=await res.json();
+    document.getElementById('settings-loading').style.display='none';
+    document.getElementById('settings-content').style.display='block';
+    const s=data.settings||{};
+    Object.entries(s).forEach(([k,v])=>{const el=document.getElementById('s-'+k);if(el)el.value=v;});
+  }catch(e){document.getElementById('settings-loading').textContent='載入失敗，請重新整理。';}
+}
+
+async function saveSettings(){
+  const keys=['banner_subtitle','banner_title','banner_desc','notice','pax_hint','check1','check2','check3','check4','success_desc'];
+  const settings={};
+  keys.forEach(k=>{const el=document.getElementById('s-'+k);if(el)settings[k]=el.value;});
+  const btn=document.getElementById('save-settings-btn');
+  btn.innerHTML='<span class="spinner-sm"></span>儲存中…';btn.disabled=true;
+  const res=await apiPost({action:'saveSettings',password:adminPw,settings});
+  btn.innerHTML='儲存所有設定';btn.disabled=false;
+  if(res&&res.success)showToast('設定已儲存，預約網頁會自動更新','ok');
+  else showToast('儲存失敗：'+(res&&res.error?res.error:'請開瀏覽器 F12 Console 查看錯誤'),'err');
+}
+
+// ── API POST（使用 text/plain 繞過 CORS preflight）──
+async function apiPost(body){
+  try{
+    // 用 POST，不設任何 header，避免 CORS preflight
+    const res = await fetch(API, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+    const text = await res.text();
+    console.log('API 回應:', text);
+    try { return JSON.parse(text); } catch(e) {
+      console.error('JSON 解析失敗:', text);
+      // 如果回應不是 JSON 但 HTTP 成功，可能是 redirect 頁面，視為成功
+      if (res.ok || res.redirected) return { success: true };
+      return null;
+    }
+  }catch(e){
+    console.error('API 呼叫失敗:', e);
+    // POST 失敗時，fallback 用 GET（短資料可能成功）
     try {
-      const r = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: postBody });
-      const text = await r.text();
-      try { result = JSON.parse(text); } catch(x) { result = { success: true }; }
-    } catch(e1) {
-      const url = APPS_SCRIPT_URL + '?action=submit&data=' + encodeURIComponent(JSON.stringify(payload));
-      const r2 = await fetch(url);
-      try { result = await r2.json(); } catch(x) { result = { success: true }; }
+      console.log('嘗試 GET fallback...');
+      const url = API + '?action=' + body.action + '&data=' + encodeURIComponent(JSON.stringify(body));
+      const res2 = await fetch(url);
+      const text2 = await res2.text();
+      console.log('GET fallback 回應:', text2);
+      return JSON.parse(text2);
+    } catch(e2) {
+      console.error('GET fallback 也失敗:', e2);
+      return null;
     }
-    document.getElementById('loading').classList.remove('show');
-    document.getElementById('form-area').style.display='none';
-    document.getElementById('success-screen').style.display='block';
-    document.getElementById('success-ref').textContent='申請編號（參考用）：'+(result.ref||'REF-'+Date.now().toString().slice(-6));
-    window.scrollTo({top:0,behavior:'smooth'});
-  }catch(e){
-    document.getElementById('loading').classList.remove('show');
-    document.getElementById('btn-submit').disabled=false;
-    alert('送出失敗，請檢查網路連線或聯絡館方。錯誤：'+e.message);
   }
 }
 
-// ── 查詢 / 取消預約 ──
-function toggleQuery(){
-  document.getElementById('query-panel').classList.toggle('open');
+// ── Toast ──
+let toastTimer;
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=`toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-async function doQuery(){
-  const org = document.getElementById('query-org').value.trim();
-  if(!org){alert('請輸入申請單位名稱');return;}
-  const btn = document.getElementById('btn-query');
-  const box = document.getElementById('query-result');
-  btn.disabled=true; btn.textContent='查詢中…';
-  box.innerHTML='';
-  try{
-    const url = APPS_SCRIPT_URL+'?action=queryBookings&data='+encodeURIComponent(JSON.stringify({org}));
-    const r = await fetch(url);
-    const data = await r.json();
-    btn.disabled=false; btn.textContent='查詢';
-    if(!data.success){box.innerHTML=`<p class="query-empty">${data.error||'查詢失敗'}</p>`;return;}
-    const list = data.bookings||[];
-    if(!list.length){box.innerHTML='<p class="query-empty">查無未來的預約紀錄。</p>';return;}
-    box.innerHTML = list.map(b=>{
-      const dateStr = formatDate(b.tourDate);
-      const timeStr = b.tourStart + (b.tourEnd ? ' ～ '+b.tourEnd : '');
-      const itemsHtml = b.items && b.items!=='（無）' ? `<div style="margin-top:.3rem">🎁 ${b.items}<br>預訂金額：NT$ ${Number(b.total).toLocaleString()}</div>` : '';
-      return `<div class="booking-card" id="bk-${b.ref}">
-        <div class="booking-card-header">
-          <span class="booking-ref">${b.ref}</span>
-        </div>
-        <div class="booking-detail">
-          📅 ${dateStr}　${timeStr}<br>
-          👥 ${b.pax} 人${itemsHtml}
-        </div>
-        <div class="booking-actions">
-          <button class="btn-cancel" onclick="showCancelForm('${b.ref}')">取消此預約</button>
-        </div>
-        <div class="cancel-verify" id="cv-${b.ref}">
-          <div style="font-size:.82rem;color:var(--ink-2);margin-bottom:.5rem">請輸入預約時填寫的聯絡人資料以驗證身分：</div>
-          <div class="field">
-            <label style="font-size:.78rem;color:var(--ink-2)">聯絡人姓名</label>
-            <input type="text" id="cn-${b.ref}" placeholder="請輸入完整姓名">
-          </div>
-          <div class="field">
-            <label style="font-size:.78rem;color:var(--ink-2)">聯絡人電話</label>
-            <input type="tel" id="cp-${b.ref}" placeholder="請輸入電話號碼">
-          </div>
-          <div class="cancel-btns">
-            <button class="btn-cancel" onclick="doCancel('${b.ref}')" id="cb-${b.ref}">確認取消</button>
-            <button style="background:transparent;border:1px solid var(--border);padding:.3rem .9rem;border-radius:4px;font-size:.82rem;cursor:pointer;font-family:'Noto Sans TC',sans-serif" onclick="hideCancelForm('${b.ref}')">返回</button>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-  }catch(e){
-    btn.disabled=false; btn.textContent='查詢';
-    box.innerHTML='<p class="query-empty">查詢失敗，請稍後再試。</p>';
-  }
-}
+// ── 預約通知 ──
+let pendingBookings=[];
 
-function formatDate(d){
+function fmtDate(d){
   if(!d) return '—';
-  // handle Date object string or yyyy-mm-dd
-  const dt = new Date(d);
-  if(isNaN(dt.getTime())) return d;
+  const dt=new Date(d);
+  if(isNaN(dt.getTime())) return String(d);
   return `${dt.getFullYear()}/${String(dt.getMonth()+1).padStart(2,'0')}/${String(dt.getDate()).padStart(2,'0')}`;
 }
-function maskName(n){
-  if(!n||n.length<=1) return n||'';
-  return n[0]+'○'.repeat(n.length-1);
-}
-function maskPhone(p){
-  if(!p||p.length<=4) return p||'';
-  return p.slice(0,3)+'****'+p.slice(-2);
-}
 
-function showCancelForm(ref){
-  document.getElementById('cv-'+ref).classList.add('open');
-}
-function hideCancelForm(ref){
-  document.getElementById('cv-'+ref).classList.remove('open');
-}
-
-async function doCancel(ref){
-  const name = document.getElementById('cn-'+ref).value.trim();
-  const phone = document.getElementById('cp-'+ref).value.trim();
-  if(!name||!phone){alert('請輸入聯絡人姓名和電話');return;}
-  if(!confirm('確定要取消此預約（'+ref+'）嗎？取消後無法復原。'))return;
-  const btn = document.getElementById('cb-'+ref);
-  btn.disabled=true; btn.textContent='處理中…';
+async function loadNotifications(){
+  document.getElementById('notif-loading').style.display='block';
+  document.getElementById('notif-content').style.display='none';
   try{
-    const body = JSON.stringify({action:'cancelBooking',ref,contactName:name,contactPhone:phone});
-    let result;
-    try{
-      const r = await fetch(APPS_SCRIPT_URL,{method:'POST',body});
-      const text = await r.text();
-      try{result=JSON.parse(text);}catch(x){result={success:false,error:'回應格式錯誤'};}
-    }catch(e1){
-      const url = APPS_SCRIPT_URL+'?action=cancelBooking&data='+encodeURIComponent(JSON.stringify({ref,contactName:name,contactPhone:phone}));
-      const r2 = await fetch(url);
-      result = await r2.json();
-    }
-    btn.disabled=false; btn.textContent='確認取消';
-    if(result.success){
-      const card = document.getElementById('bk-'+ref);
-      card.style.opacity='.4';
-      card.innerHTML='<div style="text-align:center;padding:1rem;color:var(--ok);font-weight:500">✅ 此預約已成功取消</div>';
-    } else {
-      alert(result.error||'取消失敗，請確認資料是否正確');
-    }
+    const url=API+'?action=getPending&data='+encodeURIComponent(JSON.stringify({password:adminPw}));
+    const r=await fetch(url);
+    const data=await r.json();
+    document.getElementById('notif-loading').style.display='none';
+    document.getElementById('notif-content').style.display='block';
+    if(!data.success){showToast(data.error||'載入失敗','err');return;}
+    pendingBookings=data.bookings||[];
+    renderNotifications();
   }catch(e){
-    btn.disabled=false; btn.textContent='確認取消';
-    alert('取消失敗，請稍後再試。');
+    document.getElementById('notif-loading').textContent='載入失敗，請重新整理。';
   }
 }
 
-fetchAll();
+function renderNotifications(){
+  const newList=pendingBookings.filter(b=>b.status==='正常');
+  const cancelList=pendingBookings.filter(b=>b.status==='已取消');
+
+  document.getElementById('notif-new-count').textContent=newList.length;
+  document.getElementById('notif-cancel-count').textContent=cancelList.length;
+
+  const newBox=document.getElementById('notif-new-list');
+  const cancelBox=document.getElementById('notif-cancel-list');
+
+  if(!newList.length){
+    newBox.innerHTML='<div class="notif-empty">目前沒有待處理的新預約</div>';
+    document.getElementById('notif-new-actions').style.display='none';
+  } else {
+    document.getElementById('notif-new-actions').style.display='flex';
+    newBox.innerHTML=newList.map(b=>renderNotifCard(b,'new')).join('');
+  }
+
+  if(!cancelList.length){
+    cancelBox.innerHTML='<div class="notif-empty">目前沒有待處理的取消通知</div>';
+    document.getElementById('notif-cancel-actions').style.display='none';
+  } else {
+    document.getElementById('notif-cancel-actions').style.display='flex';
+    cancelBox.innerHTML=cancelList.map(b=>renderNotifCard(b,'cancel')).join('');
+  }
+}
+
+function renderNotifCard(b,type){
+  const dateStr=fmtDate(b.tourDate);
+  const timeStr=b.tourStart+(b.tourEnd?' ～ '+b.tourEnd:'');
+  const tag=type==='new'
+    ?'<span class="notif-tag tag-new">新預約</span>'
+    :'<span class="notif-tag tag-cancel">已取消</span>';
+  const itemsHtml=b.items&&b.items!=='（無）'
+    ?`<br>🎁 ${b.items}<br>預訂金額：NT$ ${Number(b.total).toLocaleString()}`:'';
+  const leaderHtml=b.leaderName
+    ?`<br>領團人：${b.leaderName}${b.leaderPhone?' / '+b.leaderPhone:''}`:'';
+  return `<div class="notif-card type-${type}">
+    <input type="checkbox" class="notif-check" data-ref="${b.ref}" data-type="${type}">
+    <div class="notif-body">
+      <div><span class="notif-ref">${b.ref}</span>${tag}</div>
+      📅 ${dateStr}　${timeStr}<br>
+      👥 ${b.pax} 人　｜　單位：${b.org}<br>
+      聯絡人：${b.contactName} / ${b.contactPhone}${leaderHtml}${itemsHtml}
+    </div>
+  </div>`;
+}
+
+async function confirmChecked(type){
+  const checks=[...document.querySelectorAll(`.notif-check[data-type="${type}"]:checked`)];
+  if(!checks.length){showToast('請先勾選要處理的項目','err');return;}
+  const refs=checks.map(c=>c.dataset.ref);
+  const btn=document.getElementById(type==='new'?'btn-confirm-new':'btn-confirm-cancel');
+  btn.innerHTML='<span class="spinner-sm"></span>儲存中…';btn.disabled=true;
+  const r=await apiPost({action:'confirmBookings',password:adminPw,refs:refs});
+  btn.innerHTML='儲存已勾選';btn.disabled=false;
+  if(r&&r.success){
+    showToast(`已處理 ${refs.length} 筆`,'ok');
+    loadNotifications();
+  } else {
+    showToast('儲存失敗：'+(r&&r.error?r.error:'請重試'),'err');
+  }
+}
 </script>
 </body>
 </html>
