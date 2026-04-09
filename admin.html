@@ -462,22 +462,25 @@ function renderNotifications(){
 }
 
 function renderNotifCard(b,type){
-  const dateStr=fmtDate(b.tourDate);
-  const timeStr=b.tourStart+(b.tourEnd?' ～ '+b.tourEnd:'');
+  const timeStr=b.tourStart+(b.tourEnd?' — '+b.tourEnd:'');
   const tag=type==='new'
     ?'<span class="notif-tag tag-new">新預約</span>'
     :'<span class="notif-tag tag-cancel">已取消</span>';
+  const actionTime=type==='cancel'&&b.cancelTime
+    ?`🕐 取消時間：${b.cancelTime}`
+    :`🕐 送出時間：${b.submitTime}`;
   const itemsHtml=b.items&&b.items!=='（無）'
     ?`<br>🎁 ${b.items}<br>預訂金額：NT$ ${Number(b.total).toLocaleString()}`:'';
   const leaderHtml=b.leaderName
-    ?`<br>領團人：${b.leaderName}${b.leaderPhone?' / '+b.leaderPhone:''}`:'';
+    ?`<br>👤 領團人：${b.leaderName}${b.leaderPhone?' / '+b.leaderPhone:''}`:'';
   return `<div class="notif-card type-${type}">
     <input type="checkbox" class="notif-check" data-ref="${b.ref}" data-type="${type}">
     <div class="notif-body">
       <div><span class="notif-ref">${b.ref}</span>${tag}</div>
-      📅 ${dateStr}　${timeStr}<br>
-      👥 ${b.pax} 人　｜　單位：${b.org}<br>
-      聯絡人：${b.contactName} / ${b.contactPhone}${leaderHtml}${itemsHtml}
+      ${actionTime}<br>
+      🏢 ${b.org}　👥 ${b.pax} 人<br>
+      📅 ${b.tourDate}　${timeStr}<br>
+      📞 聯絡人：${b.contactName} / ${b.contactPhone}${leaderHtml}${itemsHtml}
     </div>
   </div>`;
 }
