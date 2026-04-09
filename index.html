@@ -439,15 +439,14 @@ async function doQuery(){
     box.innerHTML = list.map(b=>{
       const dateStr = formatDate(b.tourDate);
       const timeStr = b.tourStart + (b.tourEnd ? ' ～ '+b.tourEnd : '');
-      const itemsHtml = b.items && b.items!=='（無）' ? `<br>伴手禮：${b.items}<br>預訂金額：NT$ ${Number(b.total).toLocaleString()}` : '';
+      const itemsHtml = b.items && b.items!=='（無）' ? `<div style="margin-top:.3rem">🎁 ${b.items}<br>預訂金額：NT$ ${Number(b.total).toLocaleString()}</div>` : '';
       return `<div class="booking-card" id="bk-${b.ref}">
         <div class="booking-card-header">
           <span class="booking-ref">${b.ref}</span>
-          <span class="booking-date">${dateStr} ${timeStr}</span>
         </div>
         <div class="booking-detail">
-          人數：${b.pax} 人 ｜ 單位：${b.org}<br>
-          聯絡人：${maskName(b.contactName)} / ${maskPhone(b.contactPhone)}${itemsHtml}
+          📅 ${dateStr}　${timeStr}<br>
+          👥 ${b.pax} 人${itemsHtml}
         </div>
         <div class="booking-actions">
           <button class="btn-cancel" onclick="showCancelForm('${b.ref}')">取消此預約</button>
