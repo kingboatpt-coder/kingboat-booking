@@ -438,7 +438,7 @@ async function doQuery(){
     if(!list.length){box.innerHTML='<p class="query-empty">查無未來的預約紀錄。</p>';return;}
     box.innerHTML = list.map(b=>{
       const dateStr = formatDate(b.tourDate);
-      const timeStr = b.tourStart + (b.tourEnd ? ' ～ '+b.tourEnd : '');
+      const timeStr = formatTime(b.tourStart) + (b.tourEnd ? ' ～ '+formatTime(b.tourEnd) : '');
       const itemsHtml = b.items && b.items!=='（無）' ? `<div style="margin-top:.3rem">🎁 ${b.items}<br>預訂金額：NT$ ${Number(b.total).toLocaleString()}</div>` : '';
       return `<div class="booking-card" id="bk-${b.ref}">
         <div class="booking-card-header">
@@ -476,10 +476,17 @@ async function doQuery(){
 
 function formatDate(d){
   if(!d) return '—';
-  // handle Date object string or yyyy-mm-dd
+  if(typeof d==='string'&&/^\d{4}\/\d{2}\/\d{2}$/.test(d)) return d;
   const dt = new Date(d);
   if(isNaN(dt.getTime())) return d;
   return `${dt.getFullYear()}/${String(dt.getMonth()+1).padStart(2,'0')}/${String(dt.getDate()).padStart(2,'0')}`;
+}
+function formatTime(t){
+  if(!t) return '';
+  if(typeof t==='string'&&/^\d{2}:\d{2}$/.test(t)) return t;
+  const dt=new Date(t);
+  if(isNaN(dt.getTime())) return String(t);
+  return `${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}`;
 }
 function maskName(n){
   if(!n||n.length<=1) return n||'';
