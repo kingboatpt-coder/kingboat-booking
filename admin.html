@@ -217,32 +217,42 @@ const API='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlN
 <div class="toast" id="toast"></div>
 
 <script>
-let adminPw='';
+let adminToken='';
 let products=[];
 let editingId=null;
 
-// ── 登入（直接用密碼比對，不走 API，避免 CORS 問題）──
-// 密碼必須與 Apps Script 中的 ADMIN_PASSWORD 一致
-const LOCAL_PASSWORD_HASH = '781223'; // 直接填你的密碼
-
-function doLogin(){
+// ── 登入（透過 API 驗證密碼，取得 token）──
+async function doLogin(){
   const pw=document.getElementById('pw-input').value.trim();
-  if(pw===LOCAL_PASSWORD_HASH){
-    adminPw=pw;
-    document.getElementById('login-err').style.display='none';
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('admin-screen').style.display='block';
-    loadNotifications();
-  } else {
+  if(!pw){document.getElementById('login-err').style.display='block';return;}
+  const btn=document.getElementById('login-btn');
+  btn.disabled=true;btn.textContent='驗證中…';
+  try{
+    const r=await fetch(API+'?action=login&data='+encodeURIComponent(JSON.stringify({password:pw})));
+    const data=await r.json();
+    btn.disabled=false;btn.textContent='登入';
+    if(data.success&&data.token){
+      adminToken=data.token;
+      document.getElementById('login-err').style.display='none';
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('admin-screen').style.display='block';
+      loadNotifications();
+    } else {
+      document.getElementById('login-err').style.display='block';
+    }
+  }catch(e){
+    btn.disabled=false;btn.textContent='登入';
+    document.getElementById('login-err').textContent='連線失敗，請稍後再試';
     document.getElementById('login-err').style.display='block';
   }
 }
 
 function logout(){
-  adminPw='';
+  adminToken='';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('admin-screen').style.display='none';
   document.getElementById('pw-input').value='';
+  document.getElementById('login-err').textContent='密碼錯誤，請重試';
 }
 
 // ── 分頁 ──
@@ -323,7 +333,7 @@ async function saveProduct(){
   if(!id||!document.getElementById('f-name').value.trim()){showToast('請填寫商品ID和名稱','err');return;}
   const btn=document.getElementById('save-product-btn');
   btn.innerHTML='<span class="spinner-sm"></span>儲存中…';btn.disabled=true;
-  const res=await apiPost({action:'saveProduct',password:adminPw,id,
+  const res=await apiPost({action:'saveProduct',token:adminToken,id,
     name:document.getElementById('f-name').value,price:document.getElementById('f-price').value,
     stock:document.getElementById('f-stock').value,desc:document.getElementById('f-desc').value,
     img:document.getElementById('f-img').value,icon:document.getElementById('f-icon').value||'🎁'});
@@ -334,7 +344,7 @@ async function saveProduct(){
 
 async function confirmDelete(id,name){
   if(!confirm(`確定要刪除「${name}」嗎？`))return;
-  const res=await apiPost({action:'deleteProduct',password:adminPw,id});
+  const res=await apiPost({action:'deleteProduct',token:adminToken,id});
   if(res&&res.success){showToast('已刪除','ok');loadProducts();}
   else showToast('刪除失敗','err');
 }
@@ -359,7 +369,7 @@ async function saveSettings(){
   keys.forEach(k=>{const el=document.getElementById('s-'+k);if(el)settings[k]=el.value;});
   const btn=document.getElementById('save-settings-btn');
   btn.innerHTML='<span class="spinner-sm"></span>儲存中…';btn.disabled=true;
-  const res=await apiPost({action:'saveSettings',password:adminPw,settings});
+  const res=await apiPost({action:'saveSettings',token:adminToken,settings});
   btn.innerHTML='儲存所有設定';btn.disabled=false;
   if(res&&res.success)showToast('設定已儲存，預約網頁會自動更新','ok');
   else showToast('儲存失敗：'+(res&&res.error?res.error:'請開瀏覽器 F12 Console 查看錯誤'),'err');
@@ -368,33 +378,28 @@ async function saveSettings(){
 // ── API POST（使用 text/plain 繞過 CORS preflight）──
 async function apiPost(body){
   try{
-    // 用 POST，不設任何 header，避免 CORS preflight
-    const res = await fetch(API, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    });
+    const res = await fetch(API, { method: 'POST', body: JSON.stringify(body) });
     const text = await res.text();
-    console.log('API 回應:', text);
-    try { return JSON.parse(text); } catch(e) {
-      console.error('JSON 解析失敗:', text);
-      // 如果回應不是 JSON 但 HTTP 成功，可能是 redirect 頁面，視為成功
+    try {
+      const data = JSON.parse(text);
+      // Token 過期自動登出
+      if(data && data.error && data.error.includes('過期')){
+        showToast('登入已過期，請重新登入','err');
+        setTimeout(logout, 1500);
+        return null;
+      }
+      return data;
+    } catch(e) {
       if (res.ok || res.redirected) return { success: true };
       return null;
     }
   }catch(e){
-    console.error('API 呼叫失敗:', e);
-    // POST 失敗時，fallback 用 GET（短資料可能成功）
     try {
-      console.log('嘗試 GET fallback...');
       const url = API + '?action=' + body.action + '&data=' + encodeURIComponent(JSON.stringify(body));
       const res2 = await fetch(url);
       const text2 = await res2.text();
-      console.log('GET fallback 回應:', text2);
       return JSON.parse(text2);
-    } catch(e2) {
-      console.error('GET fallback 也失敗:', e2);
-      return null;
-    }
+    } catch(e2) { return null; }
   }
 }
 
@@ -443,12 +448,10 @@ async function loadNotifications(){
   document.getElementById('notif-loading').style.display='block';
   document.getElementById('notif-content').style.display='none';
   try{
-    const url=API+'?action=getPending&data='+encodeURIComponent(JSON.stringify({password:adminPw}));
-    const r=await fetch(url);
-    const data=await r.json();
+    const data=await apiPost({action:'getPending',token:adminToken});
     document.getElementById('notif-loading').style.display='none';
     document.getElementById('notif-content').style.display='block';
-    if(!data.success){showToast(data.error||'載入失敗','err');return;}
+    if(!data||!data.success){if(data)showToast(data.error||'載入失敗','err');return;}
     pendingBookings=data.bookings||[];
     renderNotifications();
   }catch(e){
@@ -515,7 +518,7 @@ async function confirmChecked(type){
   const refs=checks.map(c=>c.dataset.ref);
   const btn=document.getElementById(type==='new'?'btn-confirm-new':'btn-confirm-cancel');
   btn.innerHTML='<span class="spinner-sm"></span>儲存中…';btn.disabled=true;
-  const r=await apiPost({action:'confirmBookings',password:adminPw,refs:refs});
+  const r=await apiPost({action:'confirmBookings',token:adminToken,refs:refs});
   btn.innerHTML='儲存已勾選';btn.disabled=false;
   if(r&&r.success){
     showToast(`已處理 ${refs.length} 筆`,'ok');
