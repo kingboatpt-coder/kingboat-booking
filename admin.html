@@ -67,6 +67,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 .color-text:focus{outline:none;border-color:var(--red)}
 .color-reset{background:none;border:1px solid var(--border);border-radius:5px;padding:.3rem .6rem;font-size:.75rem;color:var(--ink-3);cursor:pointer;white-space:nowrap;font-family:'Noto Sans TC',sans-serif}
 .color-reset:hover{background:var(--paper);color:var(--ink-2)}
+.color-label{font-size:.75rem;color:var(--ink-3);white-space:nowrap;flex-shrink:0}
+.toggle-row{display:flex;align-items:center;gap:.6rem;cursor:pointer;padding:.6rem .8rem;border-radius:6px;border:1px solid var(--border);background:var(--white)}
+.toggle-row:hover{background:var(--paper)}
+.toggle-row input[type="checkbox"]{width:18px;height:18px;accent-color:var(--red);flex-shrink:0}
+.toggle-label{font-size:.9rem;font-weight:500;color:var(--ink)}
+.toggle-hint{font-size:.75rem;color:var(--ink-3)}
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:.7rem 1.2rem;border-radius:6px;font-size:.88rem;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}.toast.ok{background:var(--ok);color:#fff}.toast.err{background:#dc3545;color:#fff}
 .spinner-sm{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
@@ -189,14 +195,38 @@ const API='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlN
     <div id="settings-loading" style="color:var(--ink-3);font-size:.9rem;padding:1rem 0">載入設定中…</div>
     <div id="settings-content" style="display:none">
       <div class="settings-section">
+        <h3>⚙️ 功能開關</h3>
+        <label class="toggle-row">
+          <input type="checkbox" id="s-hide_products">
+          <span class="toggle-label">隱藏「伴手禮 ／ 餐食預訂」區塊</span>
+          <span class="toggle-hint">（勾選後前台將不會顯示商品選購區）</span>
+        </label>
+      </div>
+      <div class="settings-section">
         <h3>頂部橫幅</h3>
-        <div class="settings-field"><label>小標題（機構名稱）</label><input type="text" id="s-banner_subtitle"></div>
-        <div class="settings-field"><label>大標題（館名）</label><input type="text" id="s-banner_title"></div>
-        <div class="settings-field"><label>副標題</label><input type="text" id="s-banner_desc"></div>
+        <div class="settings-field">
+          <label>小標題（機構名稱）</label>
+          <input type="text" id="s-banner_subtitle">
+          <div class="color-row" style="margin-top:4px"><label class="color-label">文字顏色</label><input type="color" id="s-color_banner_sub" value="#C4A35A" class="color-pick"><input type="text" id="s-color_banner_sub_text" class="color-text" value="#C4A35A" style="max-width:120px"><button class="color-reset" onclick="resetColor('color_banner_sub','#C4A35A')">還原</button></div>
+        </div>
+        <div class="settings-field">
+          <label>大標題（館名）</label>
+          <input type="text" id="s-banner_title">
+          <div class="color-row" style="margin-top:4px"><label class="color-label">文字顏色</label><input type="color" id="s-color_banner_title" value="#FFFFFF" class="color-pick"><input type="text" id="s-color_banner_title_text" class="color-text" value="#FFFFFF" style="max-width:120px"><button class="color-reset" onclick="resetColor('color_banner_title','#FFFFFF')">還原</button></div>
+        </div>
+        <div class="settings-field">
+          <label>副標題</label>
+          <input type="text" id="s-banner_desc">
+          <div class="color-row" style="margin-top:4px"><label class="color-label">文字顏色</label><input type="color" id="s-color_banner_desc" value="#FFFFFF" class="color-pick"><input type="text" id="s-color_banner_desc_text" class="color-text" value="#FFFFFF" style="max-width:120px"><button class="color-reset" onclick="resetColor('color_banner_desc','#FFFFFF')">還原</button></div>
+        </div>
       </div>
       <div class="settings-section">
         <h3>申請須知</h3>
-        <div class="settings-field"><label>每一條用換行分隔</label><textarea id="s-notice" style="min-height:150px"></textarea></div>
+        <div class="settings-field">
+          <label>每一條用換行分隔</label>
+          <textarea id="s-notice" style="min-height:150px"></textarea>
+          <div class="color-row" style="margin-top:4px"><label class="color-label">文字顏色</label><input type="color" id="s-color_notice" value="#555555" class="color-pick"><input type="text" id="s-color_notice_text" class="color-text" value="#555555" style="max-width:120px"><button class="color-reset" onclick="resetColor('color_notice','#555555')">還原</button></div>
+        </div>
       </div>
       <div class="settings-section">
         <h3>人數欄位提示文字</h3>
@@ -383,8 +413,12 @@ async function loadSettings(){
     document.getElementById('settings-content').style.display='block';
     const s=data.settings||{};
     Object.entries(s).forEach(([k,v])=>{
-      const el=document.getElementById('s-'+k);if(el)el.value=v;
-      // 同步色彩欄位
+      const el=document.getElementById('s-'+k);
+      if(k==='hide_products'){
+        if(el) el.checked=(v==='1');
+      } else if(el){
+        el.value=v;
+      }
       if(k.startsWith('color_')&&v){
         const pick=document.getElementById('s-'+k);
         const text=document.getElementById('s-'+k+'_text');
@@ -397,10 +431,12 @@ async function loadSettings(){
 
 async function saveSettings(){
   const keys=['banner_subtitle','banner_title','banner_desc','notice','pax_hint','check1','check2','check3','check4','success_desc'];
-  const colorKeys=['color_pri','color_pri_lt','color_gold','color_bg','color_surface','color_text'];
+  const colorKeys=['color_pri','color_pri_lt','color_gold','color_bg','color_surface','color_text','color_banner_sub','color_banner_title','color_banner_desc','color_notice'];
   const settings={};
   keys.forEach(k=>{const el=document.getElementById('s-'+k);if(el)settings[k]=el.value;});
   colorKeys.forEach(k=>{const el=document.getElementById('s-'+k+'_text');if(el&&el.value.trim())settings[k]=el.value.trim();else settings[k]='';});
+  // 功能開關
+  settings.hide_products=document.getElementById('s-hide_products').checked?'1':'0';
   const btn=document.getElementById('save-settings-btn');
   btn.innerHTML='<span class="spinner-sm"></span>儲存中…';btn.disabled=true;
   const res=await apiPost({action:'saveSettings',token:adminToken,settings});
@@ -569,7 +605,7 @@ function resetColor(k,def){
   if(pick)pick.value=def;
   if(text)text.value=def;
 }
-['color_pri','color_pri_lt','color_gold','color_bg','color_surface','color_text'].forEach(k=>{
+['color_pri','color_pri_lt','color_gold','color_bg','color_surface','color_text','color_banner_sub','color_banner_title','color_banner_desc','color_notice'].forEach(k=>{
   const pick=document.getElementById('s-'+k);
   const text=document.getElementById('s-'+k+'_text');
   if(pick&&text){
