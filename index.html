@@ -182,11 +182,11 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
       </div>
     </div>
 
-    <div class="step-section reveal">
+    <div class="step-section reveal" id="step-products">
       <div class="step-marker">2</div>
       <div class="step-label">伴手禮 ／ 餐食預訂 <small>（選填）</small></div>
       <div class="step-card">
-        <p style="font-size:.83rem;color:var(--text-3);margin-bottom:1.2rem;">可預先選購，收到訂單後會專人聯繫確認。金額將於現場統一收取，本館不做預先收款，請確定需要再下訂。</p>
+        <p style="font-size:.83rem;color:var(--text-3);margin-bottom:1.2rem;">可為每位團員預先選購，金額將於現場統一收取。</p>
         <div class="products-grid" id="products-grid">
           <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
           <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
@@ -244,11 +244,18 @@ function applySettings(s){
   set('pax_hint',s.pax_hint);set('check1',s.check1);set('check2',s.check2);set('check3',s.check3);set('check4',s.check4);
   if(s.success_desc){const el=document.getElementById('s-success_desc');if(el) el.innerHTML=s.success_desc.replace(/\n/g,'<br>');}
   if(s.notice){const el=document.getElementById('s-notice');if(el) el.innerHTML=s.notice.replace(/\n/g,'<br>');}
+  // 隱藏伴手禮區塊
+  if(s.hide_products==='1'){const el=document.getElementById('step-products');if(el)el.style.display='none';}
   // 套用自訂配色
   const root=document.documentElement.style;
   const colorMap={color_pri:'--pri',color_pri_lt:'--pri-lt',color_gold:'--gold',color_bg:'--bg',color_surface:'--surface',color_text:'--text'};
   Object.entries(colorMap).forEach(([key,cssVar])=>{
     if(s[key]&&/^#[0-9a-fA-F]{6}$/.test(s[key])) root.setProperty(cssVar,s[key]);
+  });
+  // 套用個別文字顏色
+  const txtColorMap={color_banner_sub:'s-banner_subtitle',color_banner_title:'s-banner_title',color_banner_desc:'s-banner_desc',color_notice:'s-notice'};
+  Object.entries(txtColorMap).forEach(([key,elId])=>{
+    if(s[key]&&/^#[0-9a-fA-F]{6}$/.test(s[key])){const el=document.getElementById(elId);if(el)el.style.color=s[key];}
   });
 }
 
