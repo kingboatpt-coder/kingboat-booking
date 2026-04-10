@@ -63,11 +63,18 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .error-msg{font-size:.78rem;color:var(--danger);margin-top:3px;display:none}
 .field.invalid input,.field.invalid select{border-color:var(--danger);box-shadow:0 0 0 3px rgba(192,57,43,.1)}
 .field.invalid .error-msg{display:block}
-.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.2rem}
-.product-card{border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--surface);transition:all .35s ease;display:flex;flex-direction:column;box-shadow:var(--shadow-sm)}
+.products-wrap{position:relative}
+.products-grid{display:flex;gap:1rem;overflow-x:auto;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:4px 2px}
+.products-grid::-webkit-scrollbar{display:none}
+.product-card{border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;background:var(--surface);transition:all .35s ease;display:flex;flex-direction:column;box-shadow:var(--shadow-sm);min-width:200px;max-width:220px;flex-shrink:0}
 .product-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
 .product-card.selected{border-color:var(--pri);box-shadow:0 0 0 2px rgba(107,29,29,.12),var(--shadow)}
 .product-card.out-of-stock{opacity:.45;pointer-events:none;filter:grayscale(.4)}
+.carousel-arrow{position:absolute;top:50%;transform:translateY(-60%);width:38px;height:38px;border-radius:50%;border:none;background:var(--surface);box-shadow:0 2px 10px rgba(0,0,0,.15);cursor:pointer;font-size:1.1rem;color:var(--text);display:flex;align-items:center;justify-content:center;z-index:2;transition:all .2s}
+.carousel-arrow:hover{background:var(--pri);color:#fff;box-shadow:0 4px 16px rgba(107,29,29,.25)}
+.carousel-arrow.left{left:-12px}
+.carousel-arrow.right{right:-12px}
+.carousel-arrow.hidden{opacity:0;pointer-events:none}
 .product-img-wrap{width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--surface-2);display:flex;align-items:center;justify-content:center}
 .product-img{width:100%;height:100%;object-fit:contain;display:block;padding:8px;transition:transform .4s}
 .product-card:hover .product-img{transform:scale(1.04)}
@@ -85,7 +92,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .qty-btn:active{transform:scale(.9)}
 .qty-num{min-width:28px;text-align:center;font-size:1rem;font-weight:600}
 .qty-label{font-size:.75rem;color:var(--text-3)}
-.skeleton{border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.skeleton{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;min-width:200px;max-width:220px;flex-shrink:0}
 .skeleton-img{width:100%;aspect-ratio:4/3;background:linear-gradient(90deg,var(--surface-2) 25%,var(--border) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
 .skeleton-body{padding:.9rem;display:flex;flex-direction:column;gap:.6rem}
 .skeleton-line{height:12px;border-radius:6px;background:linear-gradient(90deg,var(--surface-2) 25%,var(--border) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite}
@@ -131,7 +138,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .reveal.visible{opacity:1;transform:translateY(0)}
 .footer-accent{height:4px;background:linear-gradient(90deg,var(--bg),var(--gold),var(--pri),var(--gold),var(--bg));margin-top:2rem;border-radius:2px}
 @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:600px){.field-grid{grid-template-columns:1fr}.field-full{grid-column:1}.products-grid{grid-template-columns:1fr 1fr}.hero-title{font-size:1.8rem}.hero{padding:3rem 1rem 4rem}.step-section{padding-left:2.8rem}.step-card{padding:1.2rem}.main-wrap{padding:0 .8rem 4rem}}
+@media(max-width:600px){.field-grid{grid-template-columns:1fr}.field-full{grid-column:1}.product-card{min-width:170px;max-width:180px}.hero-title{font-size:1.8rem}.hero{padding:3rem 1rem 4rem}.step-section{padding-left:2.8rem}.step-card{padding:1.2rem}.main-wrap{padding:0 .8rem 4rem}.carousel-arrow{width:32px;height:32px;font-size:.9rem}}
 </style>
 </head>
 <body>
@@ -186,11 +193,15 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
       <div class="step-marker">2</div>
       <div class="step-label">伴手禮 ／ 餐食預訂 <small>（選填）</small></div>
       <div class="step-card">
-        <p style="font-size:.83rem;color:var(--text-3);margin-bottom:1.2rem;">預先選購，將由專人聯繫接洽。本館無預先收款，僅做備貨，確定購買再下單，非常感謝。</p>
-        <div class="products-grid" id="products-grid">
-          <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-          <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-          <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+        <p style="font-size:.83rem;color:var(--text-3);margin-bottom:1.2rem;">可為每位團員預先選購，金額將於現場統一收取。</p>
+        <div class="products-wrap">
+          <button class="carousel-arrow left hidden" id="arrow-left" onclick="scrollProducts(-1)">‹</button>
+          <div class="products-grid" id="products-grid">
+            <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+            <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+            <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+          </div>
+          <button class="carousel-arrow right" id="arrow-right" onclick="scrollProducts(1)">›</button>
         </div>
         <div class="order-summary" id="order-summary" style="display:none">
           <div id="summary-items"></div>
@@ -277,6 +288,22 @@ function renderProducts(){
     const st=stock<=0?'已售完':stock<=5?`剩餘 ${stock} 份`:'庫存充足';
     grid.innerHTML+=`<div class="product-card ${qty>0?'selected':stock<=0?'out-of-stock':''}" id="card-${p.id}">${p.img?`<div class="product-img-wrap"><img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.closest('.product-img-wrap').outerHTML='<div class=product-img-placeholder>${p.icon||'🎁'}</div>'"></div>`:`<div class="product-img-placeholder">${p.icon||'🎁'}</div>`}<div class="product-info"><div class="product-name">${p.name}</div><div class="product-desc">${(p.desc||'').replace(/\n/g,'<br>')}</div><div class="product-bottom"><div class="product-price">NT$ ${Number(p.price).toLocaleString()} ／份</div><span class="stock-badge ${sc}">${st}</span><div class="qty-row"><button class="qty-btn" onclick="changeQty('${p.id}',-1)">－</button><div class="qty-num" id="qty-${p.id}">${qty}</div><button class="qty-btn" onclick="changeQty('${p.id}',1)">＋</button><span class="qty-label">份</span></div></div></div></div>`;
   });
+  updateArrows();
+  grid.addEventListener('scroll',updateArrows);
+}
+
+function scrollProducts(dir){
+  const grid=document.getElementById('products-grid');
+  const cardW=grid.querySelector('.product-card')?.offsetWidth||220;
+  grid.scrollBy({left:dir*(cardW+16)*2,behavior:'smooth'});
+}
+function updateArrows(){
+  const grid=document.getElementById('products-grid');
+  const left=document.getElementById('arrow-left');
+  const right=document.getElementById('arrow-right');
+  if(!grid||!left||!right)return;
+  left.classList.toggle('hidden',grid.scrollLeft<=8);
+  right.classList.toggle('hidden',grid.scrollLeft+grid.clientWidth>=grid.scrollWidth-8);
 }
 
 function changeQty(id,d){quantities[id]=Math.max(0,Math.min(inventory[id]??0,(quantities[id]??0)+d));document.getElementById(`qty-${id}`).textContent=quantities[id];document.getElementById(`card-${id}`).className=`product-card ${quantities[id]>0?'selected':inventory[id]<=0?'out-of-stock':''}`;updateSummary();}
