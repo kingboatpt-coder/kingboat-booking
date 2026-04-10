@@ -70,11 +70,13 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .product-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
 .product-card.selected{border-color:var(--pri);box-shadow:0 0 0 2px rgba(107,29,29,.12),var(--shadow)}
 .product-card.out-of-stock{opacity:.45;pointer-events:none;filter:grayscale(.4)}
-.carousel-arrow{position:absolute;top:50%;transform:translateY(-60%);width:38px;height:38px;border-radius:50%;border:none;background:var(--surface);box-shadow:0 2px 10px rgba(0,0,0,.15);cursor:pointer;font-size:1.1rem;color:var(--text);display:flex;align-items:center;justify-content:center;z-index:2;transition:all .2s}
-.carousel-arrow:hover{background:var(--pri);color:#fff;box-shadow:0 4px 16px rgba(107,29,29,.25)}
-.carousel-arrow.left{left:-12px}
-.carousel-arrow.right{right:-12px}
+.carousel-arrow{position:absolute;top:50%;transform:translateY(-60%);width:42px;height:42px;border-radius:50%;border:2px solid var(--border);background:var(--surface);box-shadow:0 2px 12px rgba(0,0,0,.12);cursor:pointer;font-size:1.3rem;font-weight:700;color:var(--text);display:flex;align-items:center;justify-content:center;z-index:2;transition:all .25s}
+.carousel-arrow:hover{background:var(--pri);color:#fff;border-color:var(--pri);box-shadow:0 4px 16px rgba(107,29,29,.3)}
+.carousel-arrow.left{left:-20px}
+.carousel-arrow.right{right:-20px}
 .carousel-arrow.hidden{opacity:0;pointer-events:none}
+.sub-label{font-size:.9rem;font-weight:600;color:var(--text);margin:1.4rem 0 .7rem;display:flex;align-items:center;gap:.4rem}
+.sub-label:first-of-type{margin-top:0}
 .product-img-wrap{width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--surface-2);display:flex;align-items:center;justify-content:center}
 .product-img{width:100%;height:100%;object-fit:contain;display:block;padding:8px;transition:transform .4s}
 .product-card:hover .product-img{transform:scale(1.04)}
@@ -193,16 +195,36 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
       <div class="step-marker">2</div>
       <div class="step-label">伴手禮 ／ 餐食預訂 <small>（選填）</small></div>
       <div class="step-card">
-        <p style="font-size:.83rem;color:var(--text-3);margin-bottom:1.2rem;">可為每位團員預先選購，金額將於現場統一收取。</p>
-        <div class="products-wrap">
-          <button class="carousel-arrow left hidden" id="arrow-left" onclick="scrollProducts(-1)">‹</button>
-          <div class="products-grid" id="products-grid">
-            <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-            <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
-            <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+        <p style="font-size:.83rem;color:var(--text-3);margin-bottom:.6rem;">可為每位團員預先選購，金額將於現場統一收取。</p>
+
+        <!-- 伴手禮 -->
+        <div id="souvenirs-section">
+          <div class="sub-label">🎁 伴手禮</div>
+          <div class="products-wrap">
+            <button class="carousel-arrow left hidden" id="arrow-s-left" onclick="scrollCarousel('souvenirs-grid',-1)">‹</button>
+            <div class="products-grid" id="souvenirs-grid">
+              <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+              <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+              <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+            </div>
+            <button class="carousel-arrow right" id="arrow-s-right" onclick="scrollCarousel('souvenirs-grid',1)">›</button>
           </div>
-          <button class="carousel-arrow right" id="arrow-right" onclick="scrollProducts(1)">›</button>
         </div>
+
+        <!-- 餐食 -->
+        <div id="meals-section">
+          <div class="sub-label">🍱 餐食預訂</div>
+          <div class="products-wrap">
+            <button class="carousel-arrow left hidden" id="arrow-m-left" onclick="scrollCarousel('meals-grid',-1)">‹</button>
+            <div class="products-grid" id="meals-grid">
+              <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+              <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+              <div class="skeleton"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div></div>
+            </div>
+            <button class="carousel-arrow right" id="arrow-m-right" onclick="scrollCarousel('meals-grid',1)">›</button>
+          </div>
+        </div>
+
         <div class="order-summary" id="order-summary" style="display:none">
           <div id="summary-items"></div>
           <div class="summary-total"><span>合計金額（供參考，現場付款）</span><span id="summary-total-price">NT$0</span></div>
@@ -255,8 +277,10 @@ function applySettings(s){
   set('pax_hint',s.pax_hint);set('check1',s.check1);set('check2',s.check2);set('check3',s.check3);set('check4',s.check4);
   if(s.success_desc){const el=document.getElementById('s-success_desc');if(el) el.innerHTML=s.success_desc.replace(/\n/g,'<br>');}
   if(s.notice){const el=document.getElementById('s-notice');if(el) el.innerHTML=s.notice.replace(/\n/g,'<br>');}
-  // 隱藏伴手禮區塊
-  if(s.hide_products==='1'){const el=document.getElementById('step-products');if(el)el.style.display='none';}
+  // 隱藏伴手禮/餐食區塊
+  if(s.hide_souvenirs==='1'){const el=document.getElementById('souvenirs-section');if(el)el.style.display='none';}
+  if(s.hide_meals==='1'){const el=document.getElementById('meals-section');if(el)el.style.display='none';}
+  if(s.hide_souvenirs==='1'&&s.hide_meals==='1'){const el=document.getElementById('step-products');if(el)el.style.display='none';}
   // 套用自訂配色
   const root=document.documentElement.style;
   const colorMap={color_pri:'--pri',color_pri_lt:'--pri-lt',color_gold:'--gold',color_bg:'--bg',color_surface:'--surface',color_text:'--text'};
@@ -276,32 +300,56 @@ async function fetchAll(){
     if(sr.settings) applySettings(sr.settings);
     document.getElementById('form-area').style.opacity='1';
     if(pr.products&&pr.products.length){PRODUCTS=pr.products;PRODUCTS.forEach(p=>{inventory[p.id]=p.stock;quantities[p.id]=0;});renderProducts();}
-    else{document.getElementById('products-grid').innerHTML='<p style="color:var(--text-3);font-size:.85rem;">目前無商品資料。</p>';}
-  }catch(e){document.getElementById('form-area').style.opacity='1';document.getElementById('products-grid').innerHTML='<p style="color:var(--text-3);font-size:.85rem;">商品資料載入失敗，請重新整理頁面。</p>';}
+    else{
+      document.getElementById('souvenirs-grid').innerHTML='<p style="color:var(--text-3);font-size:.85rem;">目前無商品資料。</p>';
+      document.getElementById('meals-grid').innerHTML='<p style="color:var(--text-3);font-size:.85rem;">目前無餐食資料。</p>';
+    }
+  }catch(e){
+    document.getElementById('form-area').style.opacity='1';
+    document.getElementById('souvenirs-grid').innerHTML='<p style="color:var(--text-3);font-size:.85rem;">載入失敗，請重新整理。</p>';
+    document.getElementById('meals-grid').innerHTML='';
+  }
+}
+
+function renderCardHTML(p){
+  const stock=inventory[p.id]??0,qty=quantities[p.id]??0;
+  const sc=stock<=0?'stock-out':stock<=5?'stock-low':'stock-ok';
+  const st=stock<=0?'已售完':stock<=5?`剩餘 ${stock} 份`:'庫存充足';
+  return `<div class="product-card ${qty>0?'selected':stock<=0?'out-of-stock':''}" id="card-${p.id}">${p.img?`<div class="product-img-wrap"><img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.closest('.product-img-wrap').outerHTML='<div class=product-img-placeholder>${p.icon||'🎁'}</div>'"></div>`:`<div class="product-img-placeholder">${p.icon||'🎁'}</div>`}<div class="product-info"><div class="product-name">${p.name}</div><div class="product-desc">${(p.desc||'').replace(/\n/g,'<br>')}</div><div class="product-bottom"><div class="product-price">NT$ ${Number(p.price).toLocaleString()} ／份</div><span class="stock-badge ${sc}">${st}</span><div class="qty-row"><button class="qty-btn" onclick="changeQty('${p.id}',-1)">－</button><div class="qty-num" id="qty-${p.id}">${qty}</div><button class="qty-btn" onclick="changeQty('${p.id}',1)">＋</button><span class="qty-label">份</span></div></div></div></div>`;
 }
 
 function renderProducts(){
-  const grid=document.getElementById('products-grid');grid.innerHTML='';
-  PRODUCTS.forEach(p=>{
-    const stock=inventory[p.id]??0,qty=quantities[p.id]??0;
-    const sc=stock<=0?'stock-out':stock<=5?'stock-low':'stock-ok';
-    const st=stock<=0?'已售完':stock<=5?`剩餘 ${stock} 份`:'庫存充足';
-    grid.innerHTML+=`<div class="product-card ${qty>0?'selected':stock<=0?'out-of-stock':''}" id="card-${p.id}">${p.img?`<div class="product-img-wrap"><img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.closest('.product-img-wrap').outerHTML='<div class=product-img-placeholder>${p.icon||'🎁'}</div>'"></div>`:`<div class="product-img-placeholder">${p.icon||'🎁'}</div>`}<div class="product-info"><div class="product-name">${p.name}</div><div class="product-desc">${(p.desc||'').replace(/\n/g,'<br>')}</div><div class="product-bottom"><div class="product-price">NT$ ${Number(p.price).toLocaleString()} ／份</div><span class="stock-badge ${sc}">${st}</span><div class="qty-row"><button class="qty-btn" onclick="changeQty('${p.id}',-1)">－</button><div class="qty-num" id="qty-${p.id}">${qty}</div><button class="qty-btn" onclick="changeQty('${p.id}',1)">＋</button><span class="qty-label">份</span></div></div></div></div>`;
-  });
-  updateArrows();
-  grid.addEventListener('scroll',updateArrows);
+  const souvenirs=PRODUCTS.filter(p=>(p.type||'souvenir')!=='meal');
+  const meals=PRODUCTS.filter(p=>p.type==='meal');
+
+  const sGrid=document.getElementById('souvenirs-grid');
+  const mGrid=document.getElementById('meals-grid');
+  sGrid.innerHTML='';mGrid.innerHTML='';
+
+  if(souvenirs.length){souvenirs.forEach(p=>{sGrid.innerHTML+=renderCardHTML(p);});}
+  else{sGrid.innerHTML='<p style="color:var(--text-3);font-size:.85rem;">目前無伴手禮品項。</p>';}
+
+  if(meals.length){meals.forEach(p=>{mGrid.innerHTML+=renderCardHTML(p);});}
+  else{mGrid.innerHTML='<p style="color:var(--text-3);font-size:.85rem;">目前無餐食品項。</p>';}
+
+  updateCarouselArrows('souvenirs-grid');
+  updateCarouselArrows('meals-grid');
+  sGrid.addEventListener('scroll',()=>updateCarouselArrows('souvenirs-grid'));
+  mGrid.addEventListener('scroll',()=>updateCarouselArrows('meals-grid'));
 }
 
-function scrollProducts(dir){
-  const grid=document.getElementById('products-grid');
+function scrollCarousel(gridId,dir){
+  const grid=document.getElementById(gridId);
+  if(!grid)return;
   const cardW=grid.querySelector('.product-card')?.offsetWidth||220;
   grid.scrollBy({left:dir*(cardW+16)*2,behavior:'smooth'});
 }
-function updateArrows(){
-  const grid=document.getElementById('products-grid');
-  const left=document.getElementById('arrow-left');
-  const right=document.getElementById('arrow-right');
-  if(!grid||!left||!right)return;
+function updateCarouselArrows(gridId){
+  const grid=document.getElementById(gridId);if(!grid)return;
+  const prefix=gridId==='souvenirs-grid'?'arrow-s':'arrow-m';
+  const left=document.getElementById(prefix+'-left');
+  const right=document.getElementById(prefix+'-right');
+  if(!left||!right)return;
   left.classList.toggle('hidden',grid.scrollLeft<=8);
   right.classList.toggle('hidden',grid.scrollLeft+grid.clientWidth>=grid.scrollWidth-8);
 }
