@@ -188,6 +188,13 @@ const API='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlN
           <label>備用圖示 Emoji（無圖片時顯示）</label>
           <input type="text" id="f-icon" placeholder="🎁">
         </div>
+        <div class="form-field">
+          <label>分類</label>
+          <select id="f-type" style="border:1px solid var(--border);border-radius:5px;padding:.45rem .65rem;font-size:.88rem;font-family:'Noto Sans TC',sans-serif">
+            <option value="souvenir">🎁 伴手禮</option>
+            <option value="meal">🍱 餐食</option>
+          </select>
+        </div>
       </div>
       <div class="form-actions">
         <button class="btn btn-secondary btn-sm" onclick="closeProductForm()">取消</button>
@@ -202,10 +209,13 @@ const API='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlN
     <div id="settings-content" style="display:none">
       <div class="settings-section">
         <h3>⚙️ 功能開關</h3>
+        <label class="toggle-row" style="margin-bottom:.5rem">
+          <input type="checkbox" id="s-hide_souvenirs">
+          <span class="toggle-label">隱藏「伴手禮」區塊</span>
+        </label>
         <label class="toggle-row">
-          <input type="checkbox" id="s-hide_products">
-          <span class="toggle-label">隱藏「伴手禮 ／ 餐食預訂」區塊</span>
-          <span class="toggle-hint">（勾選後前台將不會顯示商品選購區）</span>
+          <input type="checkbox" id="s-hide_meals">
+          <span class="toggle-label">隱藏「餐食預訂」區塊</span>
         </label>
       </div>
       <div class="settings-section">
@@ -340,11 +350,12 @@ function renderProductList(){
     const thumb=p.img
       ?`<div class="product-thumb"><img src="${p.img}" onerror="this.outerHTML='<span>${p.icon||'🎁'}</span>'"></div>`
       :`<div class="product-thumb">${p.icon||'🎁'}</div>`;
+    const typeBadge=p.type==='meal'?'<span style="font-size:.7rem;padding:1px 6px;border-radius:10px;background:#FFF3CD;color:#856404;margin-left:.4rem">餐食</span>':'<span style="font-size:.7rem;padding:1px 6px;border-radius:10px;background:#E8F5EE;color:#1B7A4A;margin-left:.4rem">伴手禮</span>';
     list.innerHTML+=`
       <div class="product-row">
         ${thumb}
         <div class="product-meta">
-          <div class="product-meta-name">${p.name}</div>
+          <div class="product-meta-name">${p.name}${typeBadge}</div>
           <div class="product-meta-sub">ID: ${p.id} ｜ NT$${Number(p.price).toLocaleString()} ／份</div>
         </div>
         <span class="product-stock">庫存 ${p.stock}</span>
@@ -360,6 +371,7 @@ function openAddProduct(){
   editingId=null;
   document.getElementById('product-form-title').textContent='新增商品';
   ['id','name','price','stock','desc','img','icon'].forEach(k=>document.getElementById('f-'+k).value='');
+  document.getElementById('f-type').value='souvenir';
   document.getElementById('f-id').disabled=false;
   document.getElementById('product-form').style.display='block';
   document.getElementById('product-form').scrollIntoView({behavior:'smooth',block:'start'});
@@ -373,6 +385,7 @@ function openEditProduct(id){
   document.getElementById('f-name').value=p.name;document.getElementById('f-price').value=p.price;
   document.getElementById('f-stock').value=p.stock;document.getElementById('f-desc').value=p.desc;
   document.getElementById('f-img').value=p.img;document.getElementById('f-icon').value=p.icon;
+  document.getElementById('f-type').value=p.type||'souvenir';
   document.getElementById('product-form').style.display='block';
   document.getElementById('product-form').scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -387,7 +400,8 @@ async function saveProduct(){
   const res=await apiPost({action:'saveProduct',token:adminToken,id,
     name:document.getElementById('f-name').value,price:document.getElementById('f-price').value,
     stock:document.getElementById('f-stock').value,desc:document.getElementById('f-desc').value,
-    img:document.getElementById('f-img').value,icon:document.getElementById('f-icon').value||'🎁'});
+    img:document.getElementById('f-img').value,icon:document.getElementById('f-icon').value||'🎁',
+    type:document.getElementById('f-type').value});
   btn.innerHTML='儲存商品';btn.disabled=false;
   if(res&&res.success){showToast('商品已儲存','ok');closeProductForm();loadProducts();}
   else showToast('儲存失敗，請重試','err');
@@ -412,7 +426,7 @@ async function loadSettings(){
     const s=data.settings||{};
     Object.entries(s).forEach(([k,v])=>{
       const el=document.getElementById('s-'+k);
-      if(k==='hide_products'){
+      if(k==='hide_products'||k==='hide_souvenirs'||k==='hide_meals'){
         if(el) el.checked=(v==='1');
       } else if(el){
         el.value=v;
@@ -434,7 +448,8 @@ async function saveSettings(){
   keys.forEach(k=>{const el=document.getElementById('s-'+k);if(el)settings[k]=el.value;});
   colorKeys.forEach(k=>{const el=document.getElementById('s-'+k+'_text');if(el&&el.value.trim())settings[k]=el.value.trim();else settings[k]='';});
   // 功能開關
-  settings.hide_products=document.getElementById('s-hide_products').checked?'1':'0';
+  settings.hide_souvenirs=document.getElementById('s-hide_souvenirs').checked?'1':'0';
+  settings.hide_meals=document.getElementById('s-hide_meals').checked?'1':'0';
   const btn=document.getElementById('save-settings-btn');
   btn.innerHTML='<span class="spinner-sm"></span>儲存中…';btn.disabled=true;
   const res=await apiPost({action:'saveSettings',token:adminToken,settings});
