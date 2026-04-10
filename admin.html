@@ -61,10 +61,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 .settings-field input,.settings-field textarea{border:1px solid var(--border);border-radius:5px;padding:.45rem .65rem;font-size:.88rem;font-family:'Noto Sans TC',sans-serif;color:var(--ink);width:100%}
 .settings-field input:focus,.settings-field textarea:focus{outline:none;border-color:var(--red)}
 .settings-field textarea{resize:vertical;min-height:75px}
-.color-row{display:flex;gap:.5rem;align-items:center}
-.color-pick{width:36px;height:36px;border:1px solid var(--border);border-radius:5px;padding:2px;cursor:pointer;flex-shrink:0}
-.color-text{flex:1;border:1px solid var(--border);border-radius:5px;padding:.4rem .6rem;font-size:.85rem;font-family:'Noto Sans TC',sans-serif;color:var(--ink)}
+.color-row{display:flex;gap:.6rem;align-items:center}
+.color-pick{width:48px;height:40px;border:1px solid var(--border);border-radius:6px;padding:2px;cursor:pointer;flex-shrink:0}
+.color-text{flex:1;border:1px solid var(--border);border-radius:5px;padding:.45rem .7rem;font-size:.88rem;font-family:'Noto Sans TC',sans-serif;color:var(--ink);letter-spacing:.05em}
 .color-text:focus{outline:none;border-color:var(--red)}
+.color-reset{background:none;border:1px solid var(--border);border-radius:5px;padding:.3rem .6rem;font-size:.75rem;color:var(--ink-3);cursor:pointer;white-space:nowrap;font-family:'Noto Sans TC',sans-serif}
+.color-reset:hover{background:var(--paper);color:var(--ink-2)}
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:.7rem 1.2rem;border-radius:6px;font-size:.88rem;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}.toast.ok{background:var(--ok);color:#fff}.toast.err{background:#dc3545;color:#fff}
 .spinner-sm{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
@@ -214,14 +216,14 @@ const API='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlN
       <div class="settings-section">
         <h3>🎨 頁面配色</h3>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem 1.2rem">
-          <div class="settings-field"><label>主色（橫幅、按鈕）</label><div class="color-row"><input type="color" id="s-color_pri" value="#6B1D1D" class="color-pick"><input type="text" id="s-color_pri_text" class="color-text" placeholder="#6B1D1D"></div></div>
-          <div class="settings-field"><label>主色-亮（漸層結尾）</label><div class="color-row"><input type="color" id="s-color_pri_lt" value="#B84444" class="color-pick"><input type="text" id="s-color_pri_lt_text" class="color-text" placeholder="#B84444"></div></div>
-          <div class="settings-field"><label>金色裝飾</label><div class="color-row"><input type="color" id="s-color_gold" value="#C4A35A" class="color-pick"><input type="text" id="s-color_gold_text" class="color-text" placeholder="#C4A35A"></div></div>
-          <div class="settings-field"><label>頁面背景色</label><div class="color-row"><input type="color" id="s-color_bg" value="#F7F5F0" class="color-pick"><input type="text" id="s-color_bg_text" class="color-text" placeholder="#F7F5F0"></div></div>
-          <div class="settings-field"><label>卡片背景色</label><div class="color-row"><input type="color" id="s-color_surface" value="#FFFFFF" class="color-pick"><input type="text" id="s-color_surface_text" class="color-text" placeholder="#FFFFFF"></div></div>
-          <div class="settings-field"><label>主要文字色</label><div class="color-row"><input type="color" id="s-color_text" value="#1C1C1C" class="color-pick"><input type="text" id="s-color_text_text" class="color-text" placeholder="#1C1C1C"></div></div>
+          <div class="settings-field"><label>主色（橫幅、按鈕）</label><div class="color-row"><input type="color" id="s-color_pri" value="#6B1D1D" class="color-pick"><input type="text" id="s-color_pri_text" class="color-text" value="#6B1D1D"><button class="color-reset" onclick="resetColor('color_pri','#6B1D1D')">還原</button></div></div>
+          <div class="settings-field"><label>主色-亮（漸層結尾）</label><div class="color-row"><input type="color" id="s-color_pri_lt" value="#B84444" class="color-pick"><input type="text" id="s-color_pri_lt_text" class="color-text" value="#B84444"><button class="color-reset" onclick="resetColor('color_pri_lt','#B84444')">還原</button></div></div>
+          <div class="settings-field"><label>金色裝飾</label><div class="color-row"><input type="color" id="s-color_gold" value="#C4A35A" class="color-pick"><input type="text" id="s-color_gold_text" class="color-text" value="#C4A35A"><button class="color-reset" onclick="resetColor('color_gold','#C4A35A')">還原</button></div></div>
+          <div class="settings-field"><label>頁面背景色</label><div class="color-row"><input type="color" id="s-color_bg" value="#F7F5F0" class="color-pick"><input type="text" id="s-color_bg_text" class="color-text" value="#F7F5F0"><button class="color-reset" onclick="resetColor('color_bg','#F7F5F0')">還原</button></div></div>
+          <div class="settings-field"><label>卡片背景色</label><div class="color-row"><input type="color" id="s-color_surface" value="#FFFFFF" class="color-pick"><input type="text" id="s-color_surface_text" class="color-text" value="#FFFFFF"><button class="color-reset" onclick="resetColor('color_surface','#FFFFFF')">還原</button></div></div>
+          <div class="settings-field"><label>主要文字色</label><div class="color-row"><input type="color" id="s-color_text" value="#1C1C1C" class="color-pick"><input type="text" id="s-color_text_text" class="color-text" value="#1C1C1C"><button class="color-reset" onclick="resetColor('color_text','#1C1C1C')">還原</button></div></div>
         </div>
-        <p style="font-size:.75rem;color:var(--ink-3);margin-top:.6rem">※ 留空則使用預設配色。修改後需重新整理預約頁面才會生效。</p>
+        <p style="font-size:.75rem;color:var(--ink-3);margin-top:.6rem">※ 點擊左側色塊可開啟調色盤選色，或直接在右側欄位輸入色碼（如 #8B1A1A）。按「還原」可回到預設色。儲存後重新整理預約頁面即生效。</p>
       </div>
       <div style="text-align:right;margin-top:.5rem">
         <button class="btn btn-primary" id="save-settings-btn" onclick="saveSettings()">儲存所有設定</button>
@@ -561,6 +563,12 @@ async function confirmChecked(type){
 }
 
 // ── 色彩選擇器同步 ──
+function resetColor(k,def){
+  const pick=document.getElementById('s-'+k);
+  const text=document.getElementById('s-'+k+'_text');
+  if(pick)pick.value=def;
+  if(text)text.value=def;
+}
 ['color_pri','color_pri_lt','color_gold','color_bg','color_surface','color_text'].forEach(k=>{
   const pick=document.getElementById('s-'+k);
   const text=document.getElementById('s-'+k+'_text');
