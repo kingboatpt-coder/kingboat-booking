@@ -193,9 +193,9 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
 
     <div class="step-section reveal" id="step-products">
       <div class="step-marker">2</div>
-      <div class="step-label">伴手禮 ／ 餐食預訂 <small>（選填）</small></div>
+      <div class="step-label">伴手禮 ／ 餐食預訂 <small>（本區塊為選填）</small></div>
       <div class="step-card">
-        <p style="font-size:.83rem;color:var(--text-2);margin-bottom:.6rem;">預先選購伴手禮或餐食後，將由專人聯繫接洽。本館無預先收款，僅做備貨，確定購買再下單，非常感謝。</p>
+        <p style="font-size:.83rem;color:var(--text-1);margin-bottom:.6rem;">預先選購伴手禮或餐食後，將由專人聯繫接洽。本館無預先收款，僅做備貨，確定購買再下單，非常感謝。</p>
 
         <!-- 伴手禮 -->
         <div id="souvenirs-section">
@@ -301,8 +301,8 @@ async function fetchAll(){
     document.getElementById('form-area').style.opacity='1';
     if(pr.products&&pr.products.length){PRODUCTS=pr.products;PRODUCTS.forEach(p=>{inventory[p.id]=p.stock;quantities[p.id]=0;});renderProducts();}
     else{
-      document.getElementById('souvenirs-grid').innerHTML='<p style="color:var(--text-3);font-size:.85rem;">目前無商品資料。</p>';
-      document.getElementById('meals-grid').innerHTML='<p style="color:var(--text-3);font-size:.85rem;">目前無餐食資料。</p>';
+      document.getElementById('souvenirs-grid').innerHTML='<p style="color:var(--text-1);font-size:.85rem;">目前無商品資料。</p>';
+      document.getElementById('meals-grid').innerHTML='<p style="color:var(--text-1);font-size:.85rem;">目前無餐食資料。</p>';
     }
   }catch(e){
     document.getElementById('form-area').style.opacity='1';
@@ -327,10 +327,10 @@ function renderProducts(){
   sGrid.innerHTML='';mGrid.innerHTML='';
 
   if(souvenirs.length){souvenirs.forEach(p=>{sGrid.innerHTML+=renderCardHTML(p);});}
-  else{sGrid.innerHTML='<p style="color:var(--text-3);font-size:.85rem;">目前無伴手禮品項。</p>';}
+  else{sGrid.innerHTML='<p style="color:var(--text-1);font-size:.85rem;">目前無伴手禮品項。</p>';}
 
   if(meals.length){meals.forEach(p=>{mGrid.innerHTML+=renderCardHTML(p);});}
-  else{mGrid.innerHTML='<p style="color:var(--text-3);font-size:.85rem;">目前無餐食品項。</p>';}
+  else{mGrid.innerHTML='<p style="color:var(--text-1);font-size:.85rem;">目前無餐食品項。</p>';}
 
   updateCarouselArrows('souvenirs-grid');
   updateCarouselArrows('meals-grid');
