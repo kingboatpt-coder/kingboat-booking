@@ -61,6 +61,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--i
 .settings-field input,.settings-field textarea{border:1px solid var(--border);border-radius:5px;padding:.45rem .65rem;font-size:.88rem;font-family:'Noto Sans TC',sans-serif;color:var(--ink);width:100%}
 .settings-field input:focus,.settings-field textarea:focus{outline:none;border-color:var(--red)}
 .settings-field textarea{resize:vertical;min-height:75px}
+.color-row{display:flex;gap:.5rem;align-items:center}
+.color-pick{width:36px;height:36px;border:1px solid var(--border);border-radius:5px;padding:2px;cursor:pointer;flex-shrink:0}
+.color-text{flex:1;border:1px solid var(--border);border-radius:5px;padding:.4rem .6rem;font-size:.85rem;font-family:'Noto Sans TC',sans-serif;color:var(--ink)}
+.color-text:focus{outline:none;border-color:var(--red)}
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;padding:.7rem 1.2rem;border-radius:6px;font-size:.88rem;font-weight:500;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}.toast.ok{background:var(--ok);color:#fff}.toast.err{background:#dc3545;color:#fff}
 .spinner-sm{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
@@ -207,6 +211,18 @@ const API='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlN
         <h3>送出成功後的訊息</h3>
         <div class="settings-field"><textarea id="s-success_desc" style="min-height:80px"></textarea></div>
       </div>
+      <div class="settings-section">
+        <h3>🎨 頁面配色</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem 1.2rem">
+          <div class="settings-field"><label>主色（橫幅、按鈕）</label><div class="color-row"><input type="color" id="s-color_pri" value="#6B1D1D" class="color-pick"><input type="text" id="s-color_pri_text" class="color-text" placeholder="#6B1D1D"></div></div>
+          <div class="settings-field"><label>主色-亮（漸層結尾）</label><div class="color-row"><input type="color" id="s-color_pri_lt" value="#B84444" class="color-pick"><input type="text" id="s-color_pri_lt_text" class="color-text" placeholder="#B84444"></div></div>
+          <div class="settings-field"><label>金色裝飾</label><div class="color-row"><input type="color" id="s-color_gold" value="#C4A35A" class="color-pick"><input type="text" id="s-color_gold_text" class="color-text" placeholder="#C4A35A"></div></div>
+          <div class="settings-field"><label>頁面背景色</label><div class="color-row"><input type="color" id="s-color_bg" value="#F7F5F0" class="color-pick"><input type="text" id="s-color_bg_text" class="color-text" placeholder="#F7F5F0"></div></div>
+          <div class="settings-field"><label>卡片背景色</label><div class="color-row"><input type="color" id="s-color_surface" value="#FFFFFF" class="color-pick"><input type="text" id="s-color_surface_text" class="color-text" placeholder="#FFFFFF"></div></div>
+          <div class="settings-field"><label>主要文字色</label><div class="color-row"><input type="color" id="s-color_text" value="#1C1C1C" class="color-pick"><input type="text" id="s-color_text_text" class="color-text" placeholder="#1C1C1C"></div></div>
+        </div>
+        <p style="font-size:.75rem;color:var(--ink-3);margin-top:.6rem">※ 留空則使用預設配色。修改後需重新整理預約頁面才會生效。</p>
+      </div>
       <div style="text-align:right;margin-top:.5rem">
         <button class="btn btn-primary" id="save-settings-btn" onclick="saveSettings()">儲存所有設定</button>
       </div>
@@ -229,15 +245,20 @@ async function doLogin(){
   btn.disabled=true;btn.textContent='驗證中…';
   try{
     const r=await fetch(API+'?action=login&data='+encodeURIComponent(JSON.stringify({password:pw})));
-    const data=await r.json();
+    const text=await r.text();
+    console.log('登入回應:', text);
+    let data;
+    try{data=JSON.parse(text);}catch(x){data=null;}
     btn.disabled=false;btn.textContent='登入';
-    if(data.success&&data.token){
+    if(data&&data.success&&data.token){
       adminToken=data.token;
       document.getElementById('login-err').style.display='none';
       document.getElementById('login-screen').style.display='none';
       document.getElementById('admin-screen').style.display='block';
       loadNotifications();
     } else {
+      const errMsg=data&&data.error?data.error:(data&&data.error==undefined&&!data.success?'API 回傳格式異常，請確認 Apps Script 已部署新版本':'密碼錯誤，請重試');
+      document.getElementById('login-err').textContent=errMsg;
       document.getElementById('login-err').style.display='block';
     }
   }catch(e){
@@ -359,14 +380,25 @@ async function loadSettings(){
     document.getElementById('settings-loading').style.display='none';
     document.getElementById('settings-content').style.display='block';
     const s=data.settings||{};
-    Object.entries(s).forEach(([k,v])=>{const el=document.getElementById('s-'+k);if(el)el.value=v;});
+    Object.entries(s).forEach(([k,v])=>{
+      const el=document.getElementById('s-'+k);if(el)el.value=v;
+      // 同步色彩欄位
+      if(k.startsWith('color_')&&v){
+        const pick=document.getElementById('s-'+k);
+        const text=document.getElementById('s-'+k+'_text');
+        if(pick)pick.value=v;
+        if(text)text.value=v;
+      }
+    });
   }catch(e){document.getElementById('settings-loading').textContent='載入失敗，請重新整理。';}
 }
 
 async function saveSettings(){
   const keys=['banner_subtitle','banner_title','banner_desc','notice','pax_hint','check1','check2','check3','check4','success_desc'];
+  const colorKeys=['color_pri','color_pri_lt','color_gold','color_bg','color_surface','color_text'];
   const settings={};
   keys.forEach(k=>{const el=document.getElementById('s-'+k);if(el)settings[k]=el.value;});
+  colorKeys.forEach(k=>{const el=document.getElementById('s-'+k+'_text');if(el&&el.value.trim())settings[k]=el.value.trim();else settings[k]='';});
   const btn=document.getElementById('save-settings-btn');
   btn.innerHTML='<span class="spinner-sm"></span>儲存中…';btn.disabled=true;
   const res=await apiPost({action:'saveSettings',token:adminToken,settings});
@@ -527,6 +559,16 @@ async function confirmChecked(type){
     showToast('儲存失敗：'+(r&&r.error?r.error:'請重試'),'err');
   }
 }
+
+// ── 色彩選擇器同步 ──
+['color_pri','color_pri_lt','color_gold','color_bg','color_surface','color_text'].forEach(k=>{
+  const pick=document.getElementById('s-'+k);
+  const text=document.getElementById('s-'+k+'_text');
+  if(pick&&text){
+    pick.addEventListener('input',()=>{text.value=pick.value;});
+    text.addEventListener('input',()=>{if(/^#[0-9a-fA-F]{6}$/.test(text.value))pick.value=text.value;});
+  }
+});
 </script>
 </body>
 </html>
