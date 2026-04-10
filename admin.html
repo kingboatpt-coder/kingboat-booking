@@ -210,28 +210,20 @@ const API='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlN
       </div>
       <div class="settings-section">
         <h3>頂部橫幅</h3>
-        <div class="settings-field">
-          <label>小標題（機構名稱）</label>
-          <input type="text" id="s-banner_subtitle">
-          <div class="color-row"><label class="color-label">文字顏色</label><input type="color" id="s-color_banner_sub" value="#C4A35A" class="color-pick"><input type="text" id="s-color_banner_sub_text" class="color-text" value="#C4A35A"><button class="color-reset" onclick="resetColor('color_banner_sub','#C4A35A')">還原</button></div>
-        </div>
-        <div class="settings-field">
-          <label>大標題（館名）</label>
-          <input type="text" id="s-banner_title">
-          <div class="color-row"><label class="color-label">文字顏色</label><input type="color" id="s-color_banner_title" value="#FFFFFF" class="color-pick"><input type="text" id="s-color_banner_title_text" class="color-text" value="#FFFFFF"><button class="color-reset" onclick="resetColor('color_banner_title','#FFFFFF')">還原</button></div>
-        </div>
-        <div class="settings-field">
-          <label>副標題</label>
-          <input type="text" id="s-banner_desc">
-          <div class="color-row"><label class="color-label">文字顏色</label><input type="color" id="s-color_banner_desc" value="#FFFFFF" class="color-pick"><input type="text" id="s-color_banner_desc_text" class="color-text" value="#FFFFFF"><button class="color-reset" onclick="resetColor('color_banner_desc','#FFFFFF')">還原</button></div>
+        <div class="settings-field"><label>小標題（機構名稱）</label><input type="text" id="s-banner_subtitle"></div>
+        <div class="settings-field"><label>大標題（館名）</label><input type="text" id="s-banner_title"></div>
+        <div class="settings-field"><label>副標題</label><input type="text" id="s-banner_desc"></div>
+        <div class="color-grid" style="margin-top:.8rem">
+          <div class="color-item"><label>小標題顏色</label><div class="color-inner"><input type="color" id="s-color_banner_sub" value="#C4A35A" class="color-pick"><input type="text" id="s-color_banner_sub_text" class="color-text" value="#C4A35A"><button class="color-reset" onclick="resetColor('color_banner_sub','#C4A35A')">還原</button></div></div>
+          <div class="color-item"><label>大標題顏色</label><div class="color-inner"><input type="color" id="s-color_banner_title" value="#FFFFFF" class="color-pick"><input type="text" id="s-color_banner_title_text" class="color-text" value="#FFFFFF"><button class="color-reset" onclick="resetColor('color_banner_title','#FFFFFF')">還原</button></div></div>
+          <div class="color-item"><label>副標題顏色</label><div class="color-inner"><input type="color" id="s-color_banner_desc" value="#FFFFFF" class="color-pick"><input type="text" id="s-color_banner_desc_text" class="color-text" value="#FFFFFF"><button class="color-reset" onclick="resetColor('color_banner_desc','#FFFFFF')">還原</button></div></div>
         </div>
       </div>
       <div class="settings-section">
         <h3>申請須知</h3>
-        <div class="settings-field">
-          <label>每一條用換行分隔</label>
-          <textarea id="s-notice" style="min-height:150px"></textarea>
-          <div class="color-row"><label class="color-label">文字顏色</label><input type="color" id="s-color_notice" value="#555555" class="color-pick"><input type="text" id="s-color_notice_text" class="color-text" value="#555555"><button class="color-reset" onclick="resetColor('color_notice','#555555')">還原</button></div>
+        <div class="settings-field"><label>每一條用換行分隔</label><textarea id="s-notice" style="min-height:150px"></textarea></div>
+        <div class="color-grid" style="margin-top:.6rem">
+          <div class="color-item"><label>須知文字顏色</label><div class="color-inner"><input type="color" id="s-color_notice" value="#555555" class="color-pick"><input type="text" id="s-color_notice_text" class="color-text" value="#555555"><button class="color-reset" onclick="resetColor('color_notice','#555555')">還原</button></div></div>
         </div>
       </div>
       <div class="settings-section">
