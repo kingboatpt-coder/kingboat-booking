@@ -244,6 +244,12 @@ function applySettings(s){
   set('pax_hint',s.pax_hint);set('check1',s.check1);set('check2',s.check2);set('check3',s.check3);set('check4',s.check4);
   if(s.success_desc){const el=document.getElementById('s-success_desc');if(el) el.innerHTML=s.success_desc.replace(/\n/g,'<br>');}
   if(s.notice){const el=document.getElementById('s-notice');if(el) el.innerHTML=s.notice.replace(/\n/g,'<br>');}
+  // 套用自訂配色
+  const root=document.documentElement.style;
+  const colorMap={color_pri:'--pri',color_pri_lt:'--pri-lt',color_gold:'--gold',color_bg:'--bg',color_surface:'--surface',color_text:'--text'};
+  Object.entries(colorMap).forEach(([key,cssVar])=>{
+    if(s[key]&&/^#[0-9a-fA-F]{6}$/.test(s[key])) root.setProperty(cssVar,s[key]);
+  });
 }
 
 async function fetchAll(){
