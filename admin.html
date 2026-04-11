@@ -237,6 +237,11 @@ const API='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlN
         </div>
       </div>
       <div class="settings-section">
+        <h3>伴手禮／餐食說明文字</h3>
+        <div class="settings-field"><label>伴手禮區塊說明（顯示在「伴手禮」標題下方）</label><textarea id="s-souvenir_notice" style="min-height:70px"></textarea></div>
+        <div class="settings-field"><label>餐食預訂區塊說明（顯示在「餐食預訂」標題下方）</label><textarea id="s-meal_notice" style="min-height:70px"></textarea></div>
+      </div>
+      <div class="settings-section">
         <h3>人數欄位提示文字</h3>
         <div class="settings-field"><textarea id="s-pax_hint" style="min-height:60px"></textarea></div>
       </div>
@@ -442,7 +447,7 @@ async function loadSettings(){
 }
 
 async function saveSettings(){
-  const keys=['banner_subtitle','banner_title','banner_desc','notice','pax_hint','check1','check2','check3','check4','success_desc'];
+  const keys=['banner_subtitle','banner_title','banner_desc','notice','pax_hint','check1','check2','check3','check4','success_desc','souvenir_notice','meal_notice'];
   const colorKeys=['color_pri','color_pri_lt','color_gold','color_bg','color_surface','color_text','color_banner_sub','color_banner_title','color_banner_desc','color_notice'];
   const settings={};
   keys.forEach(k=>{const el=document.getElementById('s-'+k);if(el)settings[k]=el.value;});
