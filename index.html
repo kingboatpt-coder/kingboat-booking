@@ -78,7 +78,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .sub-label{font-size:.9rem;font-weight:600;color:var(--text);margin:1.4rem 0 .7rem;display:flex;align-items:center;gap:.4rem}
 .sub-label:first-of-type{margin-top:0}
 .product-img-wrap{width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--surface-2);display:flex;align-items:center;justify-content:center}
-.product-img{width:100%;height:100%;object-fit:contain;display:block;padding:8px;transition:transform .4s}
+.product-img{width:100%;height:100%;object-fit:contain;display:block;padding:8px;transition:transform .4s;cursor:pointer}
 .product-card:hover .product-img{transform:scale(1.04)}
 .product-img-placeholder{width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,var(--surface-2),var(--bg));display:flex;align-items:center;justify-content:center;font-size:2.8rem}
 .product-info{padding:1rem;display:flex;flex-direction:column;flex:1}
@@ -141,6 +141,14 @@ body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text
 .footer-accent{height:4px;background:linear-gradient(90deg,var(--bg),var(--gold),var(--pri),var(--gold),var(--bg));margin-top:2rem;border-radius:2px}
 @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.field-grid{grid-template-columns:1fr}.field-full{grid-column:1}.product-card{min-width:170px;max-width:180px}.hero-title{font-size:1.8rem}.hero{padding:3rem 1rem 4rem}.step-section{padding-left:2.8rem}.step-card{padding:1.2rem}.main-wrap{padding:0 .8rem 4rem}.carousel-arrow{width:32px;height:32px;font-size:.9rem}}
+.section-notice{font-size:.83rem;color:var(--text-2);background:var(--warn-bg);border:1px solid rgba(196,163,90,.25);border-radius:var(--r-xs);padding:8px 12px;margin-bottom:.8rem;line-height:1.7;white-space:pre-line}
+.section-notice:empty{display:none}
+.lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center}
+.lightbox-overlay.show{display:flex}
+.lightbox-inner{position:relative;max-width:min(90vw,600px);max-height:85vh}
+.lightbox-inner img{display:block;max-width:100%;max-height:85vh;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.lightbox-close{position:absolute;top:-12px;right:-12px;width:32px;height:32px;border-radius:50%;border:none;background:var(--surface);color:var(--text);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:1}
+.lightbox-close:hover{background:var(--danger);color:#fff}
 </style>
 </head>
 <body>
@@ -195,13 +203,10 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
       <div class="step-marker">2</div>
       <div class="step-label">伴手禮 ／ 餐食預訂 <small>（本區塊為選填）</small></div>
       <div class="step-card">
-        <p style="font-size:.83rem;color:var(--text-1);margin-bottom:.6rem;">本館提供預先選購伴手禮或餐食，填表後將由專人聯繫接洽。
-本館無預先收款，僅做備貨，確定購買再下單，非常感謝。
-餐食由館內一樓「漁行口食堂」提供。。</p>
-
         <!-- 伴手禮 -->
         <div id="souvenirs-section">
           <div class="sub-label">🎁 伴手禮</div>
+          <div class="section-notice" id="s-souvenir_notice"></div>
           <div class="products-wrap">
             <button class="carousel-arrow left hidden" id="arrow-s-left" onclick="scrollCarousel('souvenirs-grid',-1)">‹</button>
             <div class="products-grid" id="souvenirs-grid">
@@ -216,6 +221,7 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
         <!-- 餐食 -->
         <div id="meals-section">
           <div class="sub-label">🍱 餐食預訂</div>
+          <div class="section-notice" id="s-meal_notice"></div>
           <div class="products-wrap">
             <button class="carousel-arrow left hidden" id="arrow-m-left" onclick="scrollCarousel('meals-grid',-1)">‹</button>
             <div class="products-grid" id="meals-grid">
@@ -262,6 +268,10 @@ const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhd
   </div>
 </div>
 
+<div class="lightbox-overlay" id="lightbox" onclick="if(event.target===this)closeLightbox()">
+  <div class="lightbox-inner"><button class="lightbox-close" onclick="closeLightbox()">✕</button><img id="lightbox-img" src="" alt=""></div>
+</div>
+
 <div class="loading-overlay" id="loading">
   <div class="loading-box"><div class="spinner"></div>正在送出申請，請稍候…</div>
 </div>
@@ -283,6 +293,9 @@ function applySettings(s){
   if(s.hide_souvenirs==='1'){const el=document.getElementById('souvenirs-section');if(el)el.style.display='none';}
   if(s.hide_meals==='1'){const el=document.getElementById('meals-section');if(el)el.style.display='none';}
   if(s.hide_souvenirs==='1'&&s.hide_meals==='1'){const el=document.getElementById('step-products');if(el)el.style.display='none';}
+  // 伴手禮/餐食說明文字
+  if(s.souvenir_notice!=null){const el=document.getElementById('s-souvenir_notice');if(el)el.innerHTML=s.souvenir_notice.replace(/\\n/g,'<br>');}
+  if(s.meal_notice!=null){const el=document.getElementById('s-meal_notice');if(el)el.innerHTML=s.meal_notice.replace(/\\n/g,'<br>');}
   // 套用自訂配色
   const root=document.documentElement.style;
   const colorMap={color_pri:'--pri',color_pri_lt:'--pri-lt',color_gold:'--gold',color_bg:'--bg',color_surface:'--surface',color_text:'--text'};
@@ -397,6 +410,11 @@ async function doCancel(ref){
   try{const r=await fetch(APPS_SCRIPT_URL,{method:'POST',body});const text=await r.text();try{result=JSON.parse(text);}catch(x){result={success:false,error:'回應格式錯誤'};}}catch(e1){const url=APPS_SCRIPT_URL+'?action=cancelBooking&data='+encodeURIComponent(JSON.stringify({ref,contactName:name,contactPhone:phone}));const r2=await fetch(url);result=await r2.json();}
   btn.disabled=false;btn.textContent='確認取消';if(result.success){const card=document.getElementById('bk-'+ref);card.style.opacity='.4';card.innerHTML='<div style="text-align:center;padding:1rem;color:var(--ok);font-weight:500">✅ 此預約已成功取消</div>';}else{alert(result.error||'取消失敗，請確認資料是否正確');}}catch(e){btn.disabled=false;btn.textContent='確認取消';alert('取消失敗，請稍後再試。');}
 }
+
+function openLightbox(src){document.getElementById('lightbox-img').src=src;document.getElementById('lightbox').classList.add('show');}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('show');document.getElementById('lightbox-img').src='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLightbox();});
+document.addEventListener('click',e=>{const img=e.target.closest('.product-img');if(img){e.stopPropagation();openLightbox(img.src);}});
 
 fetchAll();
 </script>
