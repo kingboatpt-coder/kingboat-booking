@@ -237,11 +237,6 @@ const API='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlN
         </div>
       </div>
       <div class="settings-section">
-        <h3>伴手禮／餐食說明文字</h3>
-        <div class="settings-field"><label>伴手禮區塊說明（顯示在「伴手禮」標題下方）</label><textarea id="s-souvenir_notice" style="min-height:70px"></textarea></div>
-        <div class="settings-field"><label>餐食預訂區塊說明（顯示在「餐食預訂」標題下方）</label><textarea id="s-meal_notice" style="min-height:70px"></textarea></div>
-      </div>
-      <div class="settings-section">
         <h3>人數欄位提示文字</h3>
         <div class="settings-field"><textarea id="s-pax_hint" style="min-height:60px"></textarea></div>
       </div>
@@ -281,6 +276,8 @@ const API='https://script.google.com/macros/s/AKfycbzQCZbfAFEMtKWLhdcVBhVSJbyWlN
 let adminToken='';
 let products=[];
 let editingId=null;
+
+function escapeHtml(str){if(!str)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 // ── 登入（透過 API 驗證密碼，取得 token）──
 async function doLogin(){
@@ -352,21 +349,22 @@ function renderProductList(){
   if(!products.length){list.innerHTML='<p style="color:var(--ink-3);font-size:.88rem;">尚無商品，請點「新增商品」。</p>';return;}
   list.innerHTML='';
   products.forEach(p=>{
+    const eImg=escapeHtml(p.img),eIcon=escapeHtml(p.icon||'🎁'),eName=escapeHtml(p.name),eId=escapeHtml(p.id);
     const thumb=p.img
-      ?`<div class="product-thumb"><img src="${p.img}" onerror="this.outerHTML='<span>${p.icon||'🎁'}</span>'"></div>`
-      :`<div class="product-thumb">${p.icon||'🎁'}</div>`;
+      ?`<div class="product-thumb"><img src="${eImg}" onerror="this.outerHTML='<span>${eIcon}</span>'"></div>`
+      :`<div class="product-thumb">${eIcon}</div>`;
     const typeBadge=p.type==='meal'?'<span style="font-size:.7rem;padding:1px 6px;border-radius:10px;background:#FFF3CD;color:#856404;margin-left:.4rem">餐食</span>':'<span style="font-size:.7rem;padding:1px 6px;border-radius:10px;background:#E8F5EE;color:#1B7A4A;margin-left:.4rem">伴手禮</span>';
     list.innerHTML+=`
       <div class="product-row">
         ${thumb}
         <div class="product-meta">
-          <div class="product-meta-name">${p.name}${typeBadge}</div>
-          <div class="product-meta-sub">ID: ${p.id} ｜ NT$${Number(p.price).toLocaleString()} ／份</div>
+          <div class="product-meta-name">${eName}${typeBadge}</div>
+          <div class="product-meta-sub">ID: ${eId} ｜ NT$${Number(p.price).toLocaleString()} ／份</div>
         </div>
         <span class="product-stock">庫存 ${p.stock}</span>
         <div class="product-actions">
-          <button class="btn btn-secondary btn-sm" onclick="openEditProduct('${p.id}')">編輯</button>
-          <button class="btn btn-danger btn-sm" onclick="confirmDelete('${p.id}','${p.name.replace(/'/g,'')}')">刪除</button>
+          <button class="btn btn-secondary btn-sm" onclick="openEditProduct('${eId}')">編輯</button>
+          <button class="btn btn-danger btn-sm" onclick="confirmDelete('${eId}','${eName}')">刪除</button>
         </div>
       </div>`;
   });
@@ -447,7 +445,7 @@ async function loadSettings(){
 }
 
 async function saveSettings(){
-  const keys=['banner_subtitle','banner_title','banner_desc','notice','pax_hint','check1','check2','check3','check4','success_desc','souvenir_notice','meal_notice'];
+  const keys=['banner_subtitle','banner_title','banner_desc','notice','pax_hint','check1','check2','check3','check4','success_desc'];
   const colorKeys=['color_pri','color_pri_lt','color_gold','color_bg','color_surface','color_text','color_banner_sub','color_banner_title','color_banner_desc','color_notice'];
   const settings={};
   keys.forEach(k=>{const el=document.getElementById('s-'+k);if(el)settings[k]=el.value;});
@@ -582,20 +580,20 @@ function renderNotifCard(b,type){
     ?'<span class="notif-tag tag-new">新預約</span>'
     :'<span class="notif-tag tag-cancel">已取消</span>';
   const actionTime=type==='cancel'&&b.cancelTime
-    ?`🕐 取消時間：${fmtDT(b.cancelTime)}`
-    :`🕐 送出時間：${fmtDT(b.submitTime)}`;
+    ?`🕐 取消時間：${escapeHtml(fmtDT(b.cancelTime))}`
+    :`🕐 送出時間：${escapeHtml(fmtDT(b.submitTime))}`;
   const itemsHtml=b.items&&b.items!=='（無）'
-    ?`<br>🎁 ${b.items}<br>預訂金額：NT$ ${Number(b.total).toLocaleString()}`:'';
+    ?`<br>🎁 ${escapeHtml(b.items)}<br>預訂金額：NT$ ${Number(b.total).toLocaleString()}`:'';
   const leaderHtml=b.leaderName
-    ?`<br>👤 領團人：${b.leaderName}${b.leaderPhone?' / '+b.leaderPhone:''}`:'';
+    ?`<br>👤 領團人：${escapeHtml(b.leaderName)}${b.leaderPhone?' / '+escapeHtml(b.leaderPhone):''}`:'';
   return `<div class="notif-card type-${type}">
-    <input type="checkbox" class="notif-check" data-ref="${b.ref}" data-type="${type}">
+    <input type="checkbox" class="notif-check" data-ref="${escapeHtml(b.ref)}" data-type="${type}">
     <div class="notif-body">
-      <div><span class="notif-ref">${b.ref}</span>${tag}</div>
+      <div><span class="notif-ref">${escapeHtml(b.ref)}</span>${tag}</div>
       ${actionTime}<br>
-      🏢 ${b.org}　👥 ${b.pax} 人<br>
-      📅 ${fmtDate(b.tourDate)}　${timeRange}<br>
-      📞 聯絡人：${b.contactName} / ${b.contactPhone}${leaderHtml}${itemsHtml}
+      🏢 ${escapeHtml(b.org)}　👥 ${b.pax} 人<br>
+      📅 ${escapeHtml(fmtDate(b.tourDate))}　${escapeHtml(timeRange)}<br>
+      📞 聯絡人：${escapeHtml(b.contactName)} / ${escapeHtml(b.contactPhone)}${leaderHtml}${itemsHtml}
     </div>
   </div>`;
 }
